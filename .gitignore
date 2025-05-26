@@ -18,7 +18,19 @@ target/
 *.iws
 *.iml
 *.ipr
-
+out/
+.idea_modules/
+*.hprof
+*.log
+*.orig
+*.swp
+*.class
+*.jar
+*.war
+*.ear
+*.db
+*.DS_Store
+/src/main/resources/application.properties
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -31,9 +43,8 @@ build/
 
 ### VS Code ###
 .vscode/
-.mvn
+.mvn/
 .gitattributes
-*.log
-*.swp
-mvnw
+.mvnw
 mvnw.cmd
+
