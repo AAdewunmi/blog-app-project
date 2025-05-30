@@ -14,12 +14,14 @@ public class PostServiceImpl implements PostService {
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
+
     @Override
     public PostDto createPost(PostDto postDto) {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(postDto.getDescription());
+
         Post newPost = postRepository.save(post);
 
         PostDto postResponse = new PostDto();
