@@ -40,5 +40,19 @@ class PostControllerTests {
         verify(postService, times(1)).createPost(postDto);
     }
 
-    
+    @Test
+    @DisplayName("CreatePost throws IllegalArgumentException when PostDto is null")
+    void createPostThrowsExceptionWhenPostDtoIsNull() {
+        PostDto postDto = null;
+
+        when(postService.createPost(postDto)).thenThrow(new IllegalArgumentException("PostDto and its fields must not be null"));
+
+        try {
+            postController.createPost(postDto);
+        } catch (IllegalArgumentException e) {
+            assertEquals("PostDto and its fields must not be null", e.getMessage());
+        }
+
+        verify(postService, times(1)).createPost(postDto);
+    }
 }
