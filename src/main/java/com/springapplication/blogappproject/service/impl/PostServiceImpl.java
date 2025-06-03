@@ -6,6 +6,8 @@ import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -31,6 +33,20 @@ public class PostServiceImpl implements PostService {
         postResponse.setDescription(newPost.getDescription());
 
         return postResponse;
+    }
+
+    @Override
+    public List<PostDto> getAllPosts() {
+        return List.of();
+    }
+
+    private PostDto mapToPostDto(Post post) {
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setContent(post.getContent());
+        postDto.setDescription(post.getDescription());
+        return postDto;
     }
 
 }
