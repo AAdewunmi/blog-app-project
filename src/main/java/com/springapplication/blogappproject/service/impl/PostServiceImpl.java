@@ -26,18 +26,13 @@ public class PostServiceImpl implements PostService {
 
         Post newPost = postRepository.save(post);
 
-        PostDto postResponse = new PostDto();
-        postResponse.setId(newPost.getId());
-        postResponse.setTitle(newPost.getTitle());
-        postResponse.setContent(newPost.getContent());
-        postResponse.setDescription(newPost.getDescription());
-
+        PostDto postResponse = mapToPostDto(newPost);
         return postResponse;
     }
 
     @Override
     public List<PostDto> getAllPosts() {
-        return List.of();
+        return null;
     }
 
     private PostDto mapToPostDto(Post post) {
