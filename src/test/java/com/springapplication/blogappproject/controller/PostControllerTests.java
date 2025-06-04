@@ -117,4 +117,20 @@ class PostControllerTests {
         assertEquals(updatedPostDto, response.getBody());
         verify(postService, times(1)).updatePost(postDto, 1L);
     }
+
+    @Test
+    @DisplayName("UpdatePost throws exception when post with given ID does not exist")
+    void updatePostThrowsExceptionWhenPostDoesNotExist() {
+        PostDto postDto = new PostDto(null, "Updated Title", "Updated Content", "Updated Description");
+
+        when(postService.updatePost(postDto, 1L)).thenThrow(new RuntimeException("Post not found"));
+
+        try {
+            postController.updatePost(postDto, 1L);
+        } catch (RuntimeException e) {
+            assertEquals("Post not found", e.getMessage());
+        }
+
+        verify(postService, times(1)).updatePost(postDto, 1L);
+    }
 }
