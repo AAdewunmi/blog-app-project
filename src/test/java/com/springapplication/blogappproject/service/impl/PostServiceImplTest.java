@@ -1,6 +1,7 @@
 package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Post;
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +55,40 @@ public class PostServiceImplTest {
                     assertThat(dto.getContent()).isEqualTo(TEST_CONTENT);
                     assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
                 });
+    }
+
+    @Test
+    void shouldUpdatePostSuccessfully() {
+        // Arrange
+        PostDto postDto = createTestPostDto();
+        Post existingPost = createTestPost();
+        when(postRepository.findById(TEST_ID)).thenReturn(java.util.Optional.of(existingPost));
+        when(postRepository.save(any(Post.class))).thenReturn(existingPost);
+
+        // Act
+        PostDto result = postServiceImpl.updatePost(postDto, TEST_ID);
+
+        // Assert
+        assertThat(result)
+                .isNotNull()
+                .satisfies(dto -> {
+                    assertThat(dto.getId()).isEqualTo(TEST_ID);
+                    assertThat(dto.getTitle()).isEqualTo(TEST_TITLE);
+                    assertThat(dto.getContent()).isEqualTo(TEST_CONTENT);
+                    assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
+                });
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUpdatingNonExistingPost() {
+        // Arrange
+        PostDto postDto = createTestPostDto();
+        when(postRepository.findById(TEST_ID)).thenReturn(java.util.Optional.empty());
+
+        // Act & Assert
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            postServiceImpl.updatePost(postDto, TEST_ID);
+        });
     }
 
     private PostDto createTestPostDto() {
