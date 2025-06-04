@@ -88,4 +88,18 @@ class PostControllerTests {
         assertEquals(postDto, response.getBody());
         verify(postService, times(1)).getPostById(1L);
     }
+
+    @Test
+    @DisplayName("GetPostById throws exception when post with given ID does not exist")
+    void getPostByIdThrowsExceptionWhenPostDoesNotExist() {
+        when(postService.getPostById(1L)).thenThrow(new RuntimeException("Post not found"));
+
+        try {
+            postController.getPostById(1L);
+        } catch (RuntimeException e) {
+            assertEquals("Post not found", e.getMessage());
+        }
+
+        verify(postService, times(1)).getPostById(1L);
+    }
 }
