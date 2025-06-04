@@ -102,4 +102,19 @@ class PostControllerTests {
 
         verify(postService, times(1)).getPostById(1L);
     }
+
+    @Test
+    @DisplayName("UpdatePost returns updated PostDto when valid input is provided")
+    void updatePostReturnsUpdatedPostDto() {
+        PostDto postDto = new PostDto(null, "Updated Title", "Updated Content", "Updated Description");
+        PostDto updatedPostDto = new PostDto(1L, "Updated Title", "Updated Content", "Updated Description");
+
+        when(postService.updatePost(postDto, 1L)).thenReturn(updatedPostDto);
+
+        ResponseEntity<PostDto> response = postController.updatePost(postDto, 1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(updatedPostDto, response.getBody());
+        verify(postService, times(1)).updatePost(postDto, 1L);
+    }
 }
