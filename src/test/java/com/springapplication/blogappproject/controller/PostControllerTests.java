@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import java.util.List;
 
 class PostControllerTests {
 
@@ -54,5 +55,23 @@ class PostControllerTests {
         }
 
         verify(postService, times(1)).createPost(postDto);
+    }
+
+    @Test
+    @DisplayName("GetAllPosts returns a list of PostDto when posts exist")
+    void getAllPostsReturnsListOfPostDto() {
+        List<PostDto> postDtos = List.of(
+                new PostDto(1L, "Title1", "Content1", "Description1"),
+                new PostDto(2L, "Title2", "Content2", "Description2")
+        );
+
+        when(postService.getAllPosts()).thenReturn(postDtos);
+
+        List<PostDto> response = postController.getAllPosts();
+
+        assertEquals(2, response.size());
+        assertEquals("Title1", response.get(0).getTitle());
+        assertEquals("Title2", response.get(1).getTitle());
+        verify(postService, times(1)).getAllPosts();
     }
 }
