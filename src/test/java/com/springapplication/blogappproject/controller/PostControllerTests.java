@@ -74,4 +74,18 @@ class PostControllerTests {
         assertEquals("Title2", response.get(1).getTitle());
         verify(postService, times(1)).getAllPosts();
     }
+
+    @Test
+    @DisplayName("GetPostById returns PostDto when post with given ID exists")
+    void getPostByIdReturnsPostDtoWhenPostExists() {
+        PostDto postDto = new PostDto(1L, "Title", "Content", "Description");
+
+        when(postService.getPostById(1L)).thenReturn(postDto);
+
+        ResponseEntity<PostDto> response = postController.getPostById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(postDto, response.getBody());
+        verify(postService, times(1)).getPostById(1L);
+    }
 }
