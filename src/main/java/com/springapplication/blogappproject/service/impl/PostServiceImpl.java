@@ -6,7 +6,6 @@ import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 import java.util.stream.Collectors;
