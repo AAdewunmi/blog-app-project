@@ -122,5 +122,14 @@ public class PostServiceImplTest {
         org.mockito.Mockito.verify(postRepository).delete(existingPost);
     }
 
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistingPost() {
+        // Arrange
+        when(postRepository.findById(33L)).thenReturn(java.util.Optional.empty());
 
+        // Act & Assert
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            postServiceImpl.deletePostById(33L);
+        });
+    }
 }
