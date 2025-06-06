@@ -107,4 +107,20 @@ public class PostServiceImplTest {
         post.setDescription(TEST_DESCRIPTION);
         return post;
     }
+
+
+    @Test
+    void shouldDeletePostByIdSuccessfully() {
+        // Arrange
+        Post existingPost = createTestPost();
+        when(postRepository.findById(3L)).thenReturn(java.util.Optional.of(existingPost));
+
+        // Act
+        postServiceImpl.deletePostById(3L);
+
+        // Assert
+        org.mockito.Mockito.verify(postRepository).delete(existingPost);
+    }
+
+
 }
