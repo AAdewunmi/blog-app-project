@@ -113,10 +113,10 @@ public class PostServiceImplTest {
     void shouldDeletePostByIdSuccessfully() {
         // Arrange
         Post existingPost = createTestPost();
-        when(postRepository.findById(3L)).thenReturn(java.util.Optional.of(existingPost));
+        when(postRepository.findById(TEST_ID)).thenReturn(java.util.Optional.of(existingPost));
 
         // Act
-        postServiceImpl.deletePostById(3L);
+        postServiceImpl.deletePostById(TEST_ID);
 
         // Assert
         org.mockito.Mockito.verify(postRepository).delete(existingPost);
@@ -125,11 +125,11 @@ public class PostServiceImplTest {
     @Test
     void shouldThrowExceptionWhenDeletingNonExistingPost() {
         // Arrange
-        when(postRepository.findById(33L)).thenReturn(java.util.Optional.empty());
+        when(postRepository.findById(TEST_ID)).thenReturn(java.util.Optional.empty());
 
         // Act & Assert
         org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-            postServiceImpl.deletePostById(33L);
+            postServiceImpl.deletePostById(TEST_ID);
         });
     }
 }

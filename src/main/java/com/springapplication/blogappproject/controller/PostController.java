@@ -38,7 +38,10 @@ public class PostController {
      * @return List of PostDto containing all posts.
      */
     @GetMapping
-    public List<PostDto> getAllPosts(){
+    public List<PostDto> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ){
         return postService.getAllPosts();
     }
     /*
@@ -74,5 +77,16 @@ public class PostController {
         }
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePostById(@PathVariable(name = "id") long id) {
+        log.info("Receiving request to delete post with id: {}", id);
+        try {
+            postService.deletePostById(id);
+            log.info("Deleted post with id: {}", id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            log.error("Error deleting post with id: {}", id, e);
+            throw e;
+        }
+    }
 }
