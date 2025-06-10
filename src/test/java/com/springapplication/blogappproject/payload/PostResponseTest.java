@@ -89,5 +89,20 @@ class PostResponseTest {
         );
     }
 
-
+    /**
+     * Tests the all-args constructor of PostResponse.
+     * Verifies that all fields are correctly initialized with provided values.
+     */
+    @Test
+    @DisplayName("Should create PostResponse using all-args constructor")
+    void shouldCreatePostResponseUsingAllArgsConstructor() {
+        assertAll("PostResponse all-args constructor",
+                () -> assertEquals(content, postResponse.getContent(), "Content should match"),
+                () -> assertEquals(PAGE_NUMBER, postResponse.getPageNumber(), "Page number should match"),
+                () -> assertEquals(PAGE_SIZE, postResponse.getPageSize(), "Page size should match"),
+                () -> assertEquals(TOTAL_ELEMENTS, postResponse.getTotalElements(), "Total elements should match"),
+                () -> assertEquals(TOTAL_PAGES, postResponse.getTotalPages(), "Total pages should match"),
+                () -> assertEquals(LAST_PAGE, postResponse.isLastPage(), "Last page flag should match")
+        );
+    }
 }
