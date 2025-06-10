@@ -3,6 +3,11 @@ package com.springapplication.blogappproject.repository;
 import com.springapplication.blogappproject.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Repository interface for managing Post entities.
+ * This interface extends JpaRepository to provide CRUD operations and custom query methods.
+ */
+
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // Custom query methods can be defined here if needed

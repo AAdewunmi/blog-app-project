@@ -61,6 +61,12 @@ public class PostController {
             throw e;
         }
     }
+    /*
+     * Updates a blog post by its ID.
+     * @param postDto the data transfer object containing updated post details.
+     * @param id the ID of the post to update.
+     * @return ResponseEntity containing the updated PostDto and HTTP status code.
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(
@@ -77,6 +83,12 @@ public class PostController {
         }
     }
 
+    /*
+     * Deletes a blog post by its ID.
+     * @param id the ID of the post to delete.
+     * @return ResponseEntity with HTTP status code indicating the result of the deletion.
+     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostById(@PathVariable(name = "id") long id) {
         log.info("Receiving request to delete post with id: {}", id);
@@ -88,5 +100,12 @@ public class PostController {
             log.error("Error deleting post with id: {}", id, e);
             throw e;
         }
+    }
+
+    public List<PostDto> getAllPosts() {
+        log.info("Retrieving all posts");
+        List<PostDto> posts = (List<PostDto>) postService.getAllPosts();
+        log.info("Retrieved {} posts", posts.size());
+        return posts;
     }
 }
