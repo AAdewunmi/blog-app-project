@@ -105,4 +105,21 @@ class PostResponseTest {
                 () -> assertEquals(LAST_PAGE, postResponse.isLastPage(), "Last page flag should match")
         );
     }
+
+    /**
+     * Tests the content getter and setter methods.
+     * Verifies that content can be updated and retrieved correctly.
+     */
+    @Test
+    @DisplayName("Should set and get content correctly")
+    void shouldSetAndGetContent() {
+        List<PostDto> newContent = List.of(new PostDto(3L, "New Post", "New Content", "New Description"));
+        postResponse.setContent(newContent);
+
+        assertAll("Content operations",
+                () -> assertEquals(newContent, postResponse.getContent(), "Content should be updated"),
+                () -> assertEquals(1, postResponse.getContent().size(), "Content size should match"),
+                () -> assertEquals("New Post", postResponse.getContent().get(0).getTitle(), "Post title should match")
+        );
+    }
 }
