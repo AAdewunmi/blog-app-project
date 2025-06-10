@@ -122,4 +122,26 @@ class PostResponseTest {
                 () -> assertEquals("New Post", postResponse.getContent().get(0).getTitle(), "Post title should match")
         );
     }
+
+    /**
+     * Tests the pagination property getter and setter methods.
+     * Verifies that all pagination-related fields can be updated and retrieved correctly.
+     */
+    @Test
+    @DisplayName("Should set and get pagination properties")
+    void shouldSetAndGetPaginationProperties() {
+        postResponse.setPageNumber(1);
+        postResponse.setPageSize(5);
+        postResponse.setTotalElements(15);
+        postResponse.setTotalPages(3);
+        postResponse.setLastPage(true);
+
+        assertAll("Pagination properties",
+                () -> assertEquals(1, postResponse.getPageNumber(), "Page number should be updated"),
+                () -> assertEquals(5, postResponse.getPageSize(), "Page size should be updated"),
+                () -> assertEquals(15, postResponse.getTotalElements(), "Total elements should be updated"),
+                () -> assertEquals(3, postResponse.getTotalPages(), "Total pages should be updated"),
+                () -> assertTrue(postResponse.isLastPage(), "Last page should be updated")
+        );
+    }
 }
