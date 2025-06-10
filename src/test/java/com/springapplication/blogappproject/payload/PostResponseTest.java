@@ -1,5 +1,4 @@
 package com.springapplication.blogappproject.payload;
 
-public class PostResponse {
-
+public class PostResponseTest {
 }
