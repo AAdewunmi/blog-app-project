@@ -23,7 +23,7 @@ public interface PostService {
      * @param pageSize the number of posts per page
      * @return a list of PostDto objects representing the posts
      */
-    PostResponse getAllPosts(int pageNo, int pageSize);
+    PostResponse getAllPosts(int pageNo, int pageSize, String sortBy);
     /**
      * Retrieves a blog post by its ID.
      *
