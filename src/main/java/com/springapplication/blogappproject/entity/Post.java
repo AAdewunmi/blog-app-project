@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Represents a blog post entity.
  * This class is mapped to the "posts" table in the database.
@@ -51,5 +54,10 @@ public class Post {
     @Column(name = "description", nullable = false)
     private String description;
 
-
+    /**
+     * Set of comments associated with the post.
+     * This field establishes a one-to-many relationship with the Comment entity.
+     */
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
 }
