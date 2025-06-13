@@ -1,8 +1,11 @@
 package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Comment;
+import com.springapplication.blogappproject.entity.Post;
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.repository.CommentRepository;
+import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,14 +17,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
     /**
      * Constructor for CommentServiceImpl.
      * @param commentRepository The repository for managing comments.
      */
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
     }
     /**
      * Creates a new comment for a specific post.
@@ -31,8 +36,19 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
-        // Implementation for creating a comment
-        return null; // Placeholder return statement
+        Comment comment = mapToEntity(commentDto);
+
+        // retrieve post entity by id
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", postId));
+
+        // set post to comment entity
+        comment.setPost(post);
+
+        // comment entity to DB
+        Comment newComment =  commentRepository.save(comment);
+
+        return mapToDto(newComment);
     }
     /**
      * Retrieves a comment by its ID.
