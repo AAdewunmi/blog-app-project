@@ -66,5 +66,22 @@ public class CommentServiceImplTest {
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
+    @Test
+    void testCreateCommentPostNotFound() {
+        // Arrange
+        long postId = 1L;
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(2L);
+        commentDto.setName("Jane Doe");
+        commentDto.setEmail("janedoe@example.com");
+        commentDto.setBody("Another test comment.");
 
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> commentService.createComment(postId, commentDto));
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
 }
