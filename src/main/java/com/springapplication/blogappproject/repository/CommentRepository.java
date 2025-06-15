@@ -22,11 +22,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     CommentDto createComment(long postId, CommentDto commentDto);
 
     /**
-     * Finds all comments associated with a specific post ID.
+     * Retrieves all comments associated with a specific post ID.
      *
      * @param postId the ID of the post for which comments are to be retrieved
-     * @return a list of comments associated with the specified post ID
+     * @return a list of CommentDto objects associated with the specified post ID
      */
-    List<Comment> findByPostId(Long postId);
+   List<CommentDto> getCommentsByPostId(long postId);
+
 
 }
