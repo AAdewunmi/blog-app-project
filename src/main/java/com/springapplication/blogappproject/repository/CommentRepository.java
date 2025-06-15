@@ -13,15 +13,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     /**
-     * Creates a new comment associated with a specific post ID.
-     *
-     * @param postId the ID of the post to which the comment is associated
-     * @param commentDto the data transfer object containing comment details
-     * @return the created CommentDto
-     */
-    CommentDto createComment(long postId, CommentDto commentDto);
-
-    /**
      * Retrieves all comments associated with a specific post ID.
      *
      * @param postId the ID of the post for which comments are to be retrieved
