@@ -51,5 +51,20 @@ class CommentControllerTest {
         assertEquals(commentDto, response.getBody());
     }
 
+    @Test
+    void createComment_WithNullComment_ShouldReturnCreatedComment() {
+        // Arrange
+        long postId = 1L;
+        CommentDto emptyDto = new CommentDto();
+        when(commentService.createComment(eq(postId), any(CommentDto.class)))
+                .thenReturn(emptyDto);
 
+        // Act
+        ResponseEntity<CommentDto> response = commentController.createComment(postId, emptyDto);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
 }
