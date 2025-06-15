@@ -1,6 +1,9 @@
 package com.springapplication.blogappproject.service;
 
 import com.springapplication.blogappproject.payload.CommentDto;
+
+import java.util.List;
+
 /**
  * Service interface for managing comments in the blog application.
  * This interface defines methods for creating and managing comments associated with blog posts.
@@ -14,5 +17,14 @@ public interface CommentService {
      * @return the created CommentDto object
      */
     CommentDto createComment(long postId, CommentDto commentDto);
+
+    /**
+     * Retrieves all comments associated with a specific blog post.
+     *
+     * @param postId the ID of the post for which comments are to be retrieved
+     * @return a list of CommentDto objects associated with the specified post ID
+     */
+
+    List<CommentDto> getCommentsByPostId(long postId);
 
 }
