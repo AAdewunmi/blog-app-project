@@ -10,6 +10,9 @@ import com.springapplication.blogappproject.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * CommentServiceImpl is the implementation of the CommentService interface.
  * It provides methods to handle comment-related operations.
@@ -50,6 +53,22 @@ public class CommentServiceImpl implements CommentService {
 
         return mapToDto(newComment);
     }
+
+    /**
+     * Retrieves all comments associated with a specific post ID.
+     * @param postId The ID of the post for which comments are to be retrieved.
+     * @return A list of CommentDto objects associated with the specified post ID.
+     */
+
+    @Override
+    public List<CommentDto> getCommentsByPostId(long postId) {
+        // retrieve comments by postId
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        // convert list of comment entities to list of comment dto's
+        return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
+    }
+
     /**
      * Retrieves a comment by its ID.
      * @param comment The ID of the comment to retrieve.
