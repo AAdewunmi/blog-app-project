@@ -27,7 +27,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      * @param postId the ID of the post for which comments are to be retrieved
      * @return a list of CommentDto objects associated with the specified post ID
      */
-   List<CommentDto> getCommentsByPostId(long postId);
+    List<Comment> findByPostId(long postId);
 
 
 }
