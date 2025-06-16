@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Comment;
 import com.springapplication.blogappproject.entity.Post;
+import com.springapplication.blogappproject.exception.BlogAPIException;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.repository.CommentRepository;
@@ -70,6 +71,12 @@ public class CommentServiceImpl implements CommentService {
         return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a comment by its ID associated with a specific post.
+     * @param postId The ID of the post to which the comment belongs.
+     * @param commentId The ID of the comment to retrieve.
+     * @return The CommentDto object representing the retrieved comment.
+     */
     @Override
     public CommentDto getCommentById(long postId, long commentId) {
         Post post = postRepository.findById(postId).orElseThrow(
