@@ -127,4 +127,22 @@ class CommentControllerTest {
         assertEquals(2, response.getBody().size());
         assertEquals(comments, response.getBody());
     }
+
+    /**
+     * Verifies that getCommentById returns the correct comment when it exists.
+     */
+    @Test
+    void getCommentById_ReturnsComment_WhenCommentExists() {
+        long postId = 1L;
+        long commentId = 1L;
+        CommentDto comment = new CommentDto(commentId, "User1", "user1@example.com", "Comment 1");
+        when(commentService.getCommentById(postId, commentId)).thenReturn(comment);
+
+        ResponseEntity<CommentDto> response = commentController.getCommentById(postId, commentId);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(comment, response.getBody());
+    }
 }
