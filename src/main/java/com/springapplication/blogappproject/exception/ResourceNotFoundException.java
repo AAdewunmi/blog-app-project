@@ -9,11 +9,26 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
+    /**
+     * The name of the resource that was not found.
+     */
     private String resourceName;
+
+    /**
+     * The name of the field that was used to search for the resource.
+     */
     private String fieldName;
+
+    /**
+     * The value of the field that was used to search for the resource.
+     */
     private long fieldValue;
 
+    /**
+     * Serial version UID for serialization.
+     */
     private static final long serialVersionUID = 1L;
+
     /**
      * Constructs a new ResourceNotFoundException with the specified resource name, field name, and field value.
      *
@@ -29,37 +44,29 @@ public class ResourceNotFoundException extends RuntimeException {
     }
 
     /**
-     * Constructs a new ResourceNotFoundException with the specified resource name and field name.
+     * Gets the name of the resource that was not found.
      *
-     * @param resourceName the name of the resource that was not found
-     * @param fieldName    the name of the field that was used to search for the resource
+     * @return the name of the resource
      */
-
     public String getResourceName() {
         return resourceName;
     }
 
     /**
-     * Constructs a new ResourceNotFoundException with the specified resource name and field name.
+     * Gets the name of the field that was used to search for the resource.
      *
-     * @param resourceName the name of the resource that was not found
-     * @param fieldName    the name of the field that was used to search for the resource
+     * @return the name of the field
      */
-
     public String getFieldName() {
         return fieldName;
     }
 
     /**
-     * Constructs a new ResourceNotFoundException with the specified resource name, field name, and field value.
+     * Gets the value of the field that was used to search for the resource.
      *
-     * @param resourceName the name of the resource that was not found
-     * @param fieldName    the name of the field that was used to search for the resource
-     * @param fieldValue   the value of the field that was used to search for the resource
+     * @return the value of the field
      */
-
     public long getFieldValue() {
         return fieldValue;
     }
-
 }
