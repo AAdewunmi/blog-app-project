@@ -27,4 +27,12 @@ public interface CommentService {
 
     List<CommentDto> getCommentsByPostId(long postId);
 
+    /**
+     * Deletes a comment associated with a specific blog post.
+     *
+     * @param postId the ID of the post from which the comment is to be deleted
+     * @param commentId the ID of the comment to be deleted
+     */
+    CommentDto getCommentById(long postId, long commentId);
+
 }
