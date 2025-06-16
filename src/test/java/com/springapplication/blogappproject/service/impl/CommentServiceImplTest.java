@@ -13,6 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 import java.util.List;
+import com.springapplication.blogappproject.exception.BlogAPIException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -100,6 +101,7 @@ public class CommentServiceImplTest {
         verify(postRepository, times(1)).findById(postId);
         verify(commentRepository, never()).save(any(Comment.class));
     }
+
     /**
      * Tests the scenario where an invalid post ID is provided when creating a comment.
      * Verifies that a ResourceNotFoundException is thrown.
@@ -119,7 +121,10 @@ public class CommentServiceImplTest {
         verify(postRepository, times(1)).findById(invalidPostId);
         verify(commentRepository, never()).save(any(Comment.class));
     }
-
+    /**
+     * Tests the retrieval of comments by post ID.
+     * Verifies that the correct comments are returned for a given post ID.
+     */
     @Test
     void getCommentsByPostIdReturnsEmptyListWhenNoCommentsExist() {
         long postId = 1L;
@@ -130,5 +135,33 @@ public class CommentServiceImplTest {
 
         assertEquals(0, comments.size());
         verify(commentRepository, times(1)).findByPostId(postId);
+    }
+    /**
+     * Tests the scenario where a comment does not belong to the specified post.
+     * Verifies that a BlogAPIException is thrown when attempting to retrieve the comment.
+     */
+    @Test
+    void getCommentByIdThrowsExceptionWhenCommentDoesNotBelongToPost() {
+        long postId = 1L;
+        long commentId = 2L;
+
+        Post post = new Post();
+        post.setId(postId);
+
+        Comment comment = new Comment();
+        comment.setId(commentId);
+
+        // Set the comment's post to a different post with a non-null id
+        Post differentPost = new Post();
+        differentPost.setId(999L); // Different from postId
+        comment.setPost(differentPost);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+
+        assertThrows(BlogAPIException.class, () -> commentService.getCommentById(postId, commentId));
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).findById(commentId);
     }
 }
