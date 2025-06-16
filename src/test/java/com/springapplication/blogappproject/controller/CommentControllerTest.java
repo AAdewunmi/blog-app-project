@@ -106,4 +106,25 @@ class CommentControllerTest {
         assertNotNull(response.getBody());
         assertEquals(0, response.getBody().size());
     }
+
+    /**
+     * Verifies that getCommentsByPostId returns a list of comments when the post has comments.
+     */
+    @Test
+    void getCommentsByPostId_ReturnsCommentsList_WhenPostHasComments() {
+        long postId = 1L;
+        List<CommentDto> comments = List.of(
+                new CommentDto(1L, "User1", "user1@example.com", "Comment 1"),
+                new CommentDto(2L, "User2", "user2@example.com", "Comment 2")
+        );
+        when(commentService.getCommentsByPostId(postId)).thenReturn(comments);
+
+        ResponseEntity<List<CommentDto>> response = commentController.getCommentsByPostId(postId);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().size());
+        assertEquals(comments, response.getBody());
+    }
 }
