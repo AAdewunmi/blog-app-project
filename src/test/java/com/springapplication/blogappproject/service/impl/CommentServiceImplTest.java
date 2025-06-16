@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,5 +118,17 @@ public class CommentServiceImplTest {
 
         verify(postRepository, times(1)).findById(invalidPostId);
         verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    @Test
+    void getCommentsByPostIdReturnsEmptyListWhenNoCommentsExist() {
+        long postId = 1L;
+
+        when(commentRepository.findByPostId(postId)).thenReturn(List.of());
+
+        List<CommentDto> comments = commentService.getCommentsByPostId(postId);
+
+        assertEquals(0, comments.size());
+        verify(commentRepository, times(1)).findByPostId(postId);
     }
 }
