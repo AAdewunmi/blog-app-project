@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 
-import static java.util.List.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 /**
  * Unit tests for the CommentController class.
@@ -144,5 +144,18 @@ class CommentControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(comment, response.getBody());
+    }
+
+    /**
+     * Verifies that getCommentById throws an exception when the comment does not exist.
+     */
+    @Test
+    void getCommentById_ThrowsException_WhenCommentDoesNotExist() {
+        long postId = 1L;
+        long commentId = 999L;
+        when(commentService.getCommentById(postId, commentId))
+                .thenThrow(new ResourceNotFoundException("Comment", "id", commentId));
+
+        assertThrows(ResourceNotFoundException.class, () -> commentController.getCommentById(postId, commentId));
     }
 }
