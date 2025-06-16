@@ -11,21 +11,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
+import static java.util.List.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-
+/**
+ * Unit tests for the CommentController class.
+ * This class verifies the behavior of the CommentController methods using mocked dependencies.
+ */
 @ExtendWith(MockitoExtension.class)
 class CommentControllerTest {
-
+    /**
+     * Mocked instance of the CommentService.
+     * Used to simulate service layer behavior in controller tests.
+     */
     @Mock
     private CommentService commentService;
-
+    /**
+     * Injected instance of the CommentController.
+     * The controller under test, with its dependencies mocked.
+     */
     @InjectMocks
     private CommentController commentController;
-
+    /**
+     * A sample CommentDto object used in test cases.
+     */
     private CommentDto commentDto;
-
+    /**
+     * Sets up the test environment before each test.
+     * Initializes the CommentDto object with sample data.
+     */
     @BeforeEach
     void setUp() {
         commentDto = new CommentDto();
@@ -33,7 +50,10 @@ class CommentControllerTest {
         commentDto.setEmail("test@example.com");
         commentDto.setName("Test User");
     }
-
+    /**
+     * Tests the createComment method of the CommentController.
+     * Verifies that the method returns the created comment with HTTP status 201 (Created).
+     */
     @Test
     void createComment_ShouldReturnCreatedComment() {
         // Arrange
@@ -50,7 +70,10 @@ class CommentControllerTest {
         assertNotNull(response.getBody());
         assertEquals(commentDto, response.getBody());
     }
-
+    /**
+     * Tests the createComment method with a null CommentDto.
+     * Verifies that the method handles null input and returns a created comment with HTTP status 201 (Created).
+     */
     @Test
     void createComment_WithNullComment_ShouldReturnCreatedComment() {
         // Arrange
@@ -66,5 +89,21 @@ class CommentControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
+    }
+
+    /**
+     * Verifies that getCommentsByPostId returns an empty list when the post has no comments.
+     */
+    @Test
+    void getCommentsByPostId_ReturnsEmptyList_WhenPostHasNoComments() {
+        long postId = 1L;
+        when(commentService.getCommentsByPostId(postId)).thenReturn(List.of());
+
+        ResponseEntity<List<CommentDto>> response = commentController.getCommentsByPostId(postId);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().size());
     }
 }
