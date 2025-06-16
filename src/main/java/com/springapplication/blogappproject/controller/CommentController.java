@@ -51,4 +51,16 @@ public class CommentController {
         List<CommentDto> comments = commentService.getCommentsByPostId(postId);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
+    /**
+     * Retrieves a specific comment by its ID associated with a specific blog post.
+     *
+     * @param postId the ID of the post to which the comment is associated
+     * @param commentId the ID of the comment to be retrieved
+     * @return a ResponseEntity containing the CommentDto and HTTP status code
+     */
+    @GetMapping("/posts/{postId}/comments/{id}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable("postId") long postId, @PathVariable("id") long commentId) {
+        CommentDto comment = commentService.getCommentById(postId, commentId);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
 }
