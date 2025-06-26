@@ -63,4 +63,21 @@ public class CommentController {
         CommentDto comment = commentService.getCommentById(postId, commentId);
         return new ResponseEntity<>(comment, HttpStatus.OK);
     }
+
+    /**
+     * Updates an existing comment associated with a specific blog post.
+
+     * @param postId the ID of the post with which the comment is associated
+     * @param commentId the ID of the comment to be updated
+     * @param commentDto the data transfer object containing the updated details of the comment
+     * @return a ResponseEntity containing the updated CommentDto and HTTP status code
+     */
+    @PutMapping("/posts/{postId}/comments/{id}")
+    public ResponseEntity<CommentDto> updateComment(
+            @PathVariable("postId") long postId,
+            @PathVariable("id") long commentId,
+            @RequestBody CommentDto commentDto) {
+        CommentDto updatedComment = commentService.updateComment(postId, commentId, commentDto);
+        return new ResponseEntity<>(updatedComment, HttpStatus.OK);
+    }
 }
