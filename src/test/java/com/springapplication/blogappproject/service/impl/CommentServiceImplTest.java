@@ -274,4 +274,41 @@ public class CommentServiceImplTest {
         verify(commentRepository, times(1)).findById(commentId);
         verify(commentRepository, never()).save(any(Comment.class));
     }
+
+    /**
+     * Tests the scenario where an attempt is made to update a comment that does not belong to the specified post.
+     * Verifies that a BlogAPIException is thrown.
+     */
+    @Test
+    void testUpdateCommentThrowsExceptionWhenCommentDoesNotBelongToPost() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 2L;
+
+        CommentDto updatedCommentDto = new CommentDto();
+        updatedCommentDto.setName("New Name");
+        updatedCommentDto.setEmail("newemail@example.com");
+        updatedCommentDto.setBody("Updated body");
+
+        Post post = new Post();
+        post.setId(postId);
+
+        Post differentPost = new Post();
+        differentPost.setId(99L);
+
+        Comment comment = new Comment();
+        comment.setId(commentId);
+        comment.setPost(differentPost);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+
+        // Act & Assert
+        assertThrows(BlogAPIException.class, () ->
+                commentService.updateComment(postId, commentId, updatedCommentDto));
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).findById(commentId);
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
 }
