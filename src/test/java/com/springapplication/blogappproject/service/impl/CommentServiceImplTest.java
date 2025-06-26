@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Comment;
 import com.springapplication.blogappproject.entity.Post;
+import com.springapplication.blogappproject.exception.BlogAPIException;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.repository.CommentRepository;
@@ -11,9 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.util.Optional;
 import java.util.List;
-import com.springapplication.blogappproject.exception.BlogAPIException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest
 public class CommentServiceImplTest {
+
     /**
      * The service being tested.
      */
@@ -163,5 +164,60 @@ public class CommentServiceImplTest {
 
         verify(postRepository, times(1)).findById(postId);
         verify(commentRepository, times(1)).findById(commentId);
+    }
+
+    /**
+     * Tests the successful update of a comment.
+     * Verifies that the updated comment data is correctly returned.
+     */
+    @Test
+    void testUpdateCommentSuccess() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 2L;
+
+        CommentDto existingCommentDto = new CommentDto();
+        existingCommentDto.setId(commentId);
+        existingCommentDto.setName("Old Name");
+        existingCommentDto.setEmail("oldemail@example.com");
+        existingCommentDto.setBody("Old body");
+
+        CommentDto updatedCommentDto = new CommentDto();
+        updatedCommentDto.setName("New Name");
+        updatedCommentDto.setEmail("newemail@example.com");
+        updatedCommentDto.setBody("Updated body");
+
+        Post post = new Post();
+        post.setId(postId);
+
+        Comment existingComment = new Comment();
+        existingComment.setId(commentId);
+        existingComment.setName("Old Name");
+        existingComment.setEmail("oldemail@example.com");
+        existingComment.setBody("Old body");
+        existingComment.setPost(post);
+
+        Comment updatedComment = new Comment();
+        updatedComment.setId(commentId);
+        updatedComment.setName("New Name");
+        updatedComment.setEmail("newemail@example.com");
+        updatedComment.setBody("Updated body");
+        updatedComment.setPost(post);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(existingComment));
+        when(commentRepository.save(any(Comment.class))).thenReturn(updatedComment);
+
+        // Act
+        CommentDto result = commentService.updateComment(postId, commentId, updatedCommentDto);
+
+        // Assert
+        assertEquals(updatedCommentDto.getName(), result.getName());
+        assertEquals(updatedCommentDto.getEmail(), result.getEmail());
+        assertEquals(updatedCommentDto.getBody(), result.getBody());
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).findById(commentId);
+        verify(commentRepository, times(1)).save(any(Comment.class));
     }
 }
