@@ -180,5 +180,22 @@ class CommentControllerTest {
         assertEquals(updatedCommentDto, response.getBody());
     }
 
+    /**
+     * Tests the updateComment method with a non-existing comment ID.
+     * Verifies that the method throws a ResourceNotFoundException when the comment does not exist.
+     */
+    @Test
+    void testUpdateComment_ThrowsException_WhenCommentDoesNotExist() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 999L;
+        CommentDto updatedCommentDto = new CommentDto(commentId, "Updated User", "updated@example.com", "Updated Comment");
+        when(commentService.updateComment(eq(postId), eq(commentId), any(CommentDto.class)))
+                .thenThrow(new ResourceNotFoundException("Comment", "id", commentId));
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> commentController.updateComment(postId, commentId, updatedCommentDto));
+    }
+
 
 }
