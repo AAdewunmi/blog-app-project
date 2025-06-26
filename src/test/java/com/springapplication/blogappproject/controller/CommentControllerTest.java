@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.controller;
 
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.service.CommentService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 /**
  * Unit tests for the CommentController class.
@@ -158,4 +157,28 @@ class CommentControllerTest {
 
         assertThrows(ResourceNotFoundException.class, () -> commentController.getCommentById(postId, commentId));
     }
+    /**
+     * Tests the updateComment method of the CommentController.
+     * Verifies that the method successfully updates a comment and returns the updated comment with HTTP status 200 (OK).
+     */
+    @Test
+    void testUpdateComment_ShouldUpdateComment() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 1L;
+        CommentDto updatedCommentDto = new CommentDto(commentId, "Updated User", "updated@example.com", "Updated Comment");
+        when(commentService.updateComment(eq(postId), eq(commentId), any(CommentDto.class)))
+                .thenReturn(updatedCommentDto);
+
+        // Act
+        ResponseEntity<CommentDto> response = commentController.updateComment(postId, commentId, updatedCommentDto);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(updatedCommentDto, response.getBody());
+    }
+
+
 }
