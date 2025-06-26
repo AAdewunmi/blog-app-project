@@ -220,4 +220,29 @@ public class CommentServiceImplTest {
         verify(commentRepository, times(1)).findById(commentId);
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
+
+    /**
+     * Tests the scenario where the post associated with the comment to update does not exist.
+     * Verifies that a ResourceNotFoundException is thrown.
+     */
+    @Test
+    void testUpdateCommentPostNotFound() {
+        // Arrange
+        long postId = 99L;
+        long commentId = 1L;
+        CommentDto updatedCommentDto = new CommentDto();
+        updatedCommentDto.setName("New Name");
+        updatedCommentDto.setEmail("newemail@example.com");
+        updatedCommentDto.setBody("Updated body");
+
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () ->
+                commentService.updateComment(postId, commentId, updatedCommentDto));
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, never()).findById(commentId);
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
 }
