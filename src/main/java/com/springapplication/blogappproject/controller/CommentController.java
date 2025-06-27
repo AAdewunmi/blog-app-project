@@ -80,4 +80,18 @@ public class CommentController {
         CommentDto updatedComment = commentService.updateComment(postId, commentId, commentDto);
         return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
+
+    /**
+     * Deletes a specific comment associated with a specific blog post.
+     *
+     * @param postId the ID of the post with which the comment is associated
+     * @param commentId the ID of the comment to be deleted
+     * @return a ResponseEntity with HTTP status code indicating the result of the deletion
+     */
+
+    @DeleteMapping("/posts/{postId}/comments/{id}")
+    public ResponseEntity<String> deleteComment(@PathVariable("postId") long postId, @PathVariable("id") long commentId) {
+        commentService.deleteComment(postId, commentId);
+        return new ResponseEntity<>("Comment deleted successfully!", HttpStatus.NO_CONTENT);
+    }
 }

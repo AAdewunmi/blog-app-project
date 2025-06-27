@@ -198,4 +198,26 @@ class CommentControllerTest {
     }
 
 
+    /**
+     * Tests the deleteComment method of the CommentController.
+     * Verifies that the method successfully deletes a comment and returns HTTP status 204 (No Content).
+     */
+    @Test
+    void testDeleteComment_ShouldDeleteComment() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 1L;
+
+        doNothing().when(commentService).deleteComment(postId, commentId);
+
+        // Act
+        ResponseEntity<String> response = commentController.deleteComment(postId, commentId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+
 }
