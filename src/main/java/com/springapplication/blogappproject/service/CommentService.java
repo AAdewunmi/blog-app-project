@@ -19,16 +19,16 @@ public interface CommentService {
     CommentDto createComment(long postId, CommentDto commentDto);
 
     /**
-     * Retrieves all comments associated with a specific blog post.
+     * Retrieves a list of comments associated with a specific blog post by ID.
      *
      * @param postId the ID of the post for which comments are to be retrieved
-     * @return a list of CommentDto objects associated with the specified post ID
+     * @return a list of CommentDto objects associated with the specified post-ID
      */
 
     List<CommentDto> getCommentsByPostId(long postId);
 
     /**
-     * Deletes a comment associated with a specific blog post.
+     * Retrieves all comments associated with a specific blog post and a specific comment ID.
      *
      * @param postId the ID of the post from which the comment is to be deleted
      * @param commentId the ID of the comment to be deleted
@@ -36,7 +36,7 @@ public interface CommentService {
     CommentDto getCommentById(long postId, long commentId);
 
     /**
-     * Deletes a comment associated with a specific blog post.
+     * Updates a comment associated with a specific blog post.
      * @param postId the ID of the post from which the comment is to be deleted
      * @param commentId the ID of the comment to be deleted
      * @param commentDto the data transfer object containing the updated details of the comment
@@ -44,4 +44,12 @@ public interface CommentService {
      */
 
     CommentDto updateComment(long postId, long commentId, CommentDto commentDto);
+
+    /**
+     * Deletes a comment associated with a specific blog post.
+     *
+     * @param postId the ID of the post from which the comment is to be deleted
+     * @param commentId the ID of the comment to be deleted
+     */
+    void deleteComment(long postId, long commentId);
 }
