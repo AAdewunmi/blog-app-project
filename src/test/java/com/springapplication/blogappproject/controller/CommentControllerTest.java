@@ -219,5 +219,20 @@ class CommentControllerTest {
         assertNull(response.getBody());
     }
 
+    /**
+     * Tests the deleteComment method with a non-existing comment ID.
+     * Verifies that the method throws a ResourceNotFoundException when the comment does not exist.
+     */
+    @Test
+    void testDeleteComment_ShouldThrowException_WhenCommentDoesNotExist() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 999L;
 
+        doThrow(new ResourceNotFoundException("Comment", "id", commentId))
+                .when(commentService).deleteComment(postId, commentId);
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> commentController.deleteComment(postId, commentId));
+    }
 }
