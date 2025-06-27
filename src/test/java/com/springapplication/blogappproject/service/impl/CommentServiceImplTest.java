@@ -360,4 +360,28 @@ public class CommentServiceImplTest {
         verify(commentRepository, never()).findById(commentId);
         verify(commentRepository, never()).delete(any(Comment.class));
     }
+
+    /**
+     * Tests the scenario where the comment to delete does not exist.
+     * Verifies that a ResourceNotFoundException is thrown.
+     */
+    @Test
+    void testDeleteCommentCommentNotFound() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 99L;
+
+        Post post = new Post();
+        post.setId(postId);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> commentService.deleteComment(postId, commentId));
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).findById(commentId);
+        verify(commentRepository, never()).delete(any(Comment.class));
+    }
 }
