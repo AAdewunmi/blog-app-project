@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class CommentServiceImplTest {
 
+
     /**
      * The service being tested.
      */
@@ -310,5 +311,33 @@ public class CommentServiceImplTest {
         verify(postRepository, times(1)).findById(postId);
         verify(commentRepository, times(1)).findById(commentId);
         verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    /**
+     * Tests the successful deletion of a comment.
+     */
+    @Test
+    void testDeleteCommentSuccess() {
+        // Arrange
+        long postId = 1L;
+        long commentId = 2L;
+
+        Post post = new Post();
+        post.setId(postId);
+
+        Comment comment = new Comment();
+        comment.setId(commentId);
+        comment.setPost(post);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
+
+        // Act
+        commentService.deleteComment(postId, commentId);
+
+        // Assert
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).findById(commentId);
+        verify(commentRepository, times(1)).delete(comment);
     }
 }
