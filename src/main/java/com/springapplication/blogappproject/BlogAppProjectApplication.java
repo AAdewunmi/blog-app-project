@@ -2,6 +2,8 @@ package com.springapplication.blogappproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
 /**
  * Main application class for the Blog App Project.
  * This class serves as the entry point for the Spring Boot application.
@@ -10,6 +12,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class BlogAppProjectApplication {
+    /**
+     * Bean definition for ModelMapper.
+     * This method creates and returns a new instance of ModelMapper,
+     * which is used for object mapping between different layers of the application.
+     *
+     * @return a new instance of ModelMapper
+     */
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
     /**
      * The main method that starts the Spring Boot application.
      *
