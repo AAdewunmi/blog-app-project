@@ -8,6 +8,7 @@ import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.repository.CommentRepository;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,16 +23,41 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
     /**
-     * Constructor for CommentServiceImpl.
-     * @param commentRepository The repository for managing comments.
+     * Repository for managing Comment entities.
+     * Provides methods for performing CRUD operations and custom database queries related to comments.
+     * It serves as a data access layer for the CommentService implementation.
+     */
+    private final CommentRepository commentRepository;
+    /**
+     * Repository for managing Post entities.
+     * Provides methods for performing CRUD operations and custom database queries related to posts.
+     * It serves as a data access layer for operations involving posts.
+     */
+    private final PostRepository postRepository;
+
+    /**
+     * An instance of ModelMapper used within the service implementation.
+     * Facilitates the mapping between entity objects and Data Transfer Objects (DTOs).
+     * Simplifies the process of converting between different object models and helps maintain
+     * separation of concerns within the application.
+     */
+    private ModelMapper modelMapper;
+    /**
+     * Constructs a new instance of CommentServiceImpl with the required dependencies.
+     *
+     * @param commentRepository The repository for managing Comment entities. Used to perform
+     *                           CRUD operations on comments and interact with the database.
+     * @param postRepository The repository for managing Post entities. Used to perform
+     *                        operations related to posts and retrieve post data.
+     * @param modelMapper The instance of ModelMapper to facilitate mapping between
+     *                    entities and DTOs.
      */
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
     /**
      * Creates a new comment for a specific post.
@@ -151,22 +177,24 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Retrieves a comment by its ID.
-     * @param comment The ID of the comment to retrieve.
-     * @return The CommentDto object representing the retrieved comment.
+     * Converts a Comment entity to a CommentDto.
+     *
+     * @param comment The Comment entity to be converted.
+     * @return The corresponding CommentDto object containing the mapped data.
      */
     private CommentDto mapToDto(Comment comment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(comment.getId());
-        commentDto.setName(comment.getName());
-        commentDto.setEmail(comment.getEmail());
-        commentDto.setBody(comment.getBody());
+        CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
+//        commentDto.setId(comment.getId());
+//        commentDto.setName(comment.getName());
+//        commentDto.setEmail(comment.getEmail());
+//        commentDto.setBody(comment.getBody());
         return commentDto;
     }
     /**
      * Maps a CommentDto object to a Comment entity.
-     * @param commentDto The CommentDto object to map.
-     * @return The Comment entity.
+     *
+     * @param commentDto The CommentDto object to be converted into a Comment entity.
+     * @return A Comment entity containing the mapped data from the CommentDto object.
      */
     private Comment mapToEntity(CommentDto commentDto) {
         Comment comment = new Comment();
