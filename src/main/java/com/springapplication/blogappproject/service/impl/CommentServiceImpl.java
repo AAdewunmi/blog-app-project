@@ -177,10 +177,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Converts a Comment entity to a CommentDto.
+     * Maps a Comment entity to a CommentDto object.
      *
-     * @param comment The Comment entity to be converted.
-     * @return The corresponding CommentDto object containing the mapped data.
+     * @param comment The Comment entity to be mapped.
+     * @return A CommentDto object containing the mapped data from the Comment entity.
      */
     private CommentDto mapToDto(Comment comment) {
         CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
@@ -197,11 +197,11 @@ public class CommentServiceImpl implements CommentService {
      * @return A Comment entity containing the mapped data from the CommentDto object.
      */
     private Comment mapToEntity(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
+        Comment comment = modelMapper.map(commentDto, Comment.class);
+//        comment.setId(commentDto.getId());
+//        comment.setName(commentDto.getName());
+//        comment.setEmail(commentDto.getEmail());
+//        comment.setBody(commentDto.getBody());
         return comment;
     }
 
