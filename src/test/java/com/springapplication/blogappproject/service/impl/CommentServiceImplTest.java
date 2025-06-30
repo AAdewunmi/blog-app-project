@@ -105,6 +105,47 @@ public class CommentServiceImplTest {
     }
 
     /**
+     * Tests the creation of a comment with invalid data.
+     *
+     * This test verifies that an exception is thrown when attempting to create a comment
+     * with invalid or missing required fields. Specifically, it checks:
+     * - The name field is null.
+     * - The body field is an empty string.
+     *
+     * Expected behavior:
+     * - An IllegalArgumentException is thrown with the message "Invalid comment data provided".
+     * - The post is retrieved from the repository.
+     * - The comment is not saved in the repository.
+     *
+     * Test scenario:
+     * 1. A CommentDto object is created with invalid name and body fields.
+     * 2. The associated post is mocked to exist in the repository.
+     * 3. The createComment method is called with the invalid data and the expected exception is asserted.
+     * 4. Verification is performed to ensure the comment repository is not invoked for saving.
+     */
+    @Test
+    void testCreateCommentWithInvalidData() {
+        // Arrange
+        long postId = 1L;
+        CommentDto commentDto = new CommentDto();
+        commentDto.setName(null); // Invalid name field
+        commentDto.setEmail("johndoe@example.com");
+        commentDto.setBody(""); // Invalid body field
+
+        Post post = new Post();
+        post.setId(postId);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> commentService.createComment(postId, commentDto));
+        assertEquals("Invalid comment data provided", exception.getMessage());
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    /**
      * Tests the scenario where an invalid post ID is provided when creating a comment.
      * Verifies that a ResourceNotFoundException is thrown.
      */

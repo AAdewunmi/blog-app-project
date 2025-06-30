@@ -67,20 +67,27 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
-        Comment comment = mapToEntity(commentDto);
-
-        // retrieve post entity by id
+        // First retrieve post entity by id
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResourceNotFoundException("Post", "id", postId));
+
+        // Validate comment data
+        if (commentDto.getName() == null || commentDto.getName().trim().isEmpty() ||
+                commentDto.getBody() == null || commentDto.getBody().trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid comment data provided");
+        }
+
+        Comment comment = mapToEntity(commentDto);
 
         // set post to comment entity
         comment.setPost(post);
 
         // comment entity to DB
-        Comment newComment =  commentRepository.save(comment);
+        Comment newComment = commentRepository.save(comment);
 
         return mapToDto(newComment);
     }
+
 
     /**
      * Retrieves all comments associated with a specific post ID.
