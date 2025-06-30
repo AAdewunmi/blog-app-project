@@ -6,6 +6,7 @@ import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +27,14 @@ public class PostServiceImpl implements PostService {
      */
     private final PostRepository postRepository;
 
+    private ModelMapper modelMapper;
+
     /** Constructor for PostServiceImpl.
      * @param postRepository the repository to be used for Post entities
      */
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
     /**
      * Creates a new post.
@@ -115,14 +119,16 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Deletes all posts.
+     * Maps a Post entity to a PostDto.
+     * @param post the Post entity to map
+     * @return the mapped PostDto
      */
     private PostDto mapToDTO(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setContent(post.getContent());
-        postDto.setDescription(post.getDescription());
+        PostDto postDto = mapper.map(post, PostDto.class);
+//        postDto.setId(post.getId());
+//        postDto.setTitle(post.getTitle());
+//        postDto.setContent(post.getContent());
+//        postDto.setDescription(post.getDescription());
         return postDto;
     }
     /**
