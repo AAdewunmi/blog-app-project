@@ -22,16 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class PostServiceImpl implements PostService {
 
-    /** Repository for accessing Post entities.
-     * This is injected via constructor injection.
-     */
     private final PostRepository postRepository;
+    private final ModelMapper modelMapper;
 
-    private ModelMapper modelMapper;
-
-    /** Constructor for PostServiceImpl.
-     * @param postRepository the repository to be used for Post entities
-     */
     public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;

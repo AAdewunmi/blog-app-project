@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
+import org.modelmapper.ModelMapper;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -18,6 +18,9 @@ public class PostServiceImplTest {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private ModelMapper modelMapper;  // Add ModelMapper mock
 
     @InjectMocks
     private PostServiceImpl postServiceImpl;
@@ -30,11 +33,30 @@ public class PostServiceImplTest {
     @BeforeEach
     void setUp() {
         try (var mocks = MockitoAnnotations.openMocks(this)) {
-            // AutoCloseable will be handled automatically
+            // Set up modelMapper mock behavior
+            when(modelMapper.map(any(PostDto.class), any())).thenAnswer(invocation -> {
+                PostDto source = invocation.getArgument(0);
+                Post target = new Post();
+                target.setTitle(source.getTitle());
+                target.setContent(source.getContent());
+                target.setDescription(source.getDescription());
+                return target;
+            });
+
+            when(modelMapper.map(any(Post.class), any())).thenAnswer(invocation -> {
+                Post source = invocation.getArgument(0);
+                PostDto target = new PostDto();
+                target.setId(source.getId());
+                target.setTitle(source.getTitle());
+                target.setContent(source.getContent());
+                target.setDescription(source.getDescription());
+                return target;
+            });
         } catch (Exception e) {
             throw new RuntimeException("Failed to open mocks", e);
         }
     }
+
 
     @Test
     void shouldCreatePostAndReturnPostDtoWithCorrectValues() {
@@ -56,6 +78,25 @@ public class PostServiceImplTest {
                     assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
                 });
     }
+
+    @Test
+    void testShouldMapPostDtoToPostAndSaveWhenCreatePostIsCalled() {
+        // Arrange
+        PostDto postDto = createTestPostDto();
+        Post expectedPost = createTestPost();
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        postServiceImpl.createPost(postDto);
+
+        // Assert
+        org.mockito.Mockito.verify(postRepository).save(any(Post.class));
+        assertThat(postDto.getTitle()).isEqualTo(expectedPost.getTitle());
+        assertThat(postDto.getContent()).isEqualTo(expectedPost.getContent());
+        assertThat(postDto.getDescription()).isEqualTo(expectedPost.getDescription());
+    }
+
+
 
     @Test
     void shouldUpdatePostSuccessfully() {
