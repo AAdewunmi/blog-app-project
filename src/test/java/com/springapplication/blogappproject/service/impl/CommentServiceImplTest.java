@@ -146,6 +146,74 @@ public class CommentServiceImplTest {
     }
 
     /**
+     * Tests the creation of a comment with an invalid post ID.
+     *
+     * This test ensures that when an invalid post ID is provided for creating a comment,
+     * the `createComment` method throws an `IllegalArgumentException`. The conditions tested include:
+     * - The post ID provided is invalid (e.g., 0 or negative).
+     * - The comment is not saved in the repository.
+     * - The post repository is not queried for the invalid ID.
+     *
+     * Test scenario:
+     * 1. A `CommentDto` object is prepared with valid fields for name, email, and body.
+     * 2. An invalid post ID is provided.
+     * 3. The `createComment` method is called with the invalid post ID and `CommentDto`.
+     * 4. An `IllegalArgumentException` is expected to be thrown.
+     * 5. Verification is performed that neither the post repository nor the comment repository is invoked.
+     */
+    @Test
+    void testCreateCommentWithInvalidPostId() {
+        // Arrange
+        long postId = 0L; // Invalid post ID
+        CommentDto commentDto = new CommentDto();
+        commentDto.setName("John Doe");
+        commentDto.setEmail("johndoe@example.com");
+        commentDto.setBody("This is a test comment.");
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> commentService.createComment(postId, commentDto));
+
+        verify(postRepository, never()).findById(postId);
+        verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    /**
+     * Tests the scenario where creating a comment fails due to an issue during the save operation.
+     *
+     * This test ensures the following:
+     * 1. The post to associate the comment with exists in the repository.
+     * 2. When the save operation on the comment repository throws a runtime exception (e.g., database error),
+     *    the exception is propagated correctly.
+     *
+     * Verification:
+     * - The post repository is queried once for the post ID.
+     * - The comment repository's save method is called once.
+     * - The correct exception is thrown with the expected message.
+     */
+    @Test
+    void testCreateCommentSaveFailure() {
+        // Arrange
+        long postId = 1L;
+        CommentDto commentDto = new CommentDto();
+        commentDto.setName("John Doe");
+        commentDto.setEmail("johndoe@example.com");
+        commentDto.setBody("This is a test comment.");
+
+        Post post = new Post();
+        post.setId(postId);
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        when(commentRepository.save(any(Comment.class))).thenThrow(new RuntimeException("Database error"));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> commentService.createComment(postId, commentDto));
+        assertEquals("Database error", exception.getMessage());
+
+        verify(postRepository, times(1)).findById(postId);
+        verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
+    /**
      * Tests the scenario where an invalid post ID is provided when creating a comment.
      * Verifies that a ResourceNotFoundException is thrown.
      */

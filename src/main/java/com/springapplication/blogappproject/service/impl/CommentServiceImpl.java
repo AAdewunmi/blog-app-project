@@ -67,9 +67,10 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
-        // First retrieve post entity by id
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Post", "id", postId));
+        // Validate post ID
+        if (postId <= 0) {
+            throw new IllegalArgumentException("Invalid comment data provided");
+        }
 
         // Validate comment data
         if (commentDto.getName() == null || commentDto.getName().trim().isEmpty() ||
@@ -79,6 +80,10 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = mapToEntity(commentDto);
 
+        // retrieve post entity by id
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", postId));
+
         // set post to comment entity
         comment.setPost(post);
 
@@ -87,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
 
         return mapToDto(newComment);
     }
+
 
 
     /**
