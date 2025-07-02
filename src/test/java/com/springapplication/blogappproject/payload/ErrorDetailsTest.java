@@ -35,4 +35,28 @@ class ErrorDetailsTest {
         // Assert
         assertEquals(expectedTimestamp, actualTimestamp, "The getTimestamp method should return the correct timestamp.");
     }
+
+    /**
+     * Tests the behavior of the `getTimestamp` method when the `ErrorDetails` instance
+     * is initialized with a null timestamp.
+     *
+     * This test ensures that the `getTimestamp` method returns null when the
+     * timestamp field was not provided during the construction of the `ErrorDetails` object.
+     *
+     * The test performs the following steps:
+     * - Creates an `ErrorDetails` instance with a null timestamp.
+     * - Invokes the `getTimestamp` method to retrieve the timestamp.
+     * - Asserts that the result is null.
+     */
+    @Test
+    void testGetTimestampWithNullValue() {
+        // Arrange
+        ErrorDetails errorDetails = new ErrorDetails(null, "Test message", "Test details");
+
+        // Act
+        Date actualTimestamp = errorDetails.getTimestamp();
+
+        // Assert
+        assertNull(actualTimestamp, "The getTimestamp method should return null when initialized with a null timestamp.");
+    }
 }

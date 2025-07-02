@@ -4,6 +4,7 @@ import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
+import com.springapplication.blogappproject.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ import java.util.List;
  * PostController handles HTTP requests related to blog posts.
  * It provides endpoints to create a post, retrieve all posts, and get a post by its ID.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
-@Slf4j
 public class PostController {
     /* PostController is a REST controller that manages blog posts.
      * It provides endpoints to create a post, retrieve all posts, and get a post by its ID.
@@ -28,21 +29,20 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<PostDto>> getAllPostsList() {
-        log.info("Retrieving all posts without pagination");
-        List<PostDto> posts = (List<PostDto>) postService.getAllPosts();
-        log.info("Retrieved {} posts", posts.size());
-        return ResponseEntity.ok(posts);
+    // Paginated version
+    @GetMapping("/paginated")
+    public PostResponse getAllPostsPaginated(
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIR) String sortDir) {
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
+    // Non-paginated version
     @GetMapping
-    public PostResponse getAllPosts(
-            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
-        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
+    public ResponseEntity<List<PostDto>> getAllPosts() {
+        return ResponseEntity.ok(postService.getAllPosts());
     }
     /*
      * Creates a new blog post.

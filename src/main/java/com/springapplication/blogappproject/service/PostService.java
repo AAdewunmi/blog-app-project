@@ -23,7 +23,13 @@ public interface PostService {
      * @param pageSize the number of posts per page
      * @return a list of PostDto objects representing the posts
      */
+    // ... other methods ...
+
+    // Paginated version
     PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
+    
+    // Non-paginated version
+    List<PostDto> getAllPosts();
     /**
      * Retrieves a blog post by its ID.
      *
@@ -46,5 +52,5 @@ public interface PostService {
      */
     void deletePostById(long id);
 
-    Object getAllPosts();
+    
 }
