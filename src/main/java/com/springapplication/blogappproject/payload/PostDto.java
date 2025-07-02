@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.payload;
 
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -38,6 +39,7 @@ public class PostDto {
      * This field stores multiple comments related to a specific post.
      */
     private Set<CommentDto> comments;
+
     /**
      * Constructor to initialize PostDto with all fields.
      *
@@ -51,6 +53,8 @@ public class PostDto {
         this.title = title;
         this.content = content;
         this.description = description;
+        this.comments = new HashSet<>();  // Initialize in constructor too
+
     }
 
     /**
@@ -58,6 +62,7 @@ public class PostDto {
      * This is used when creating an instance without initializing fields.
      */
     public PostDto() {
-        // Default constructor
+        this.comments = new HashSet<>();  // Initialize in default constructor
+
     }
 }

@@ -80,7 +80,7 @@ class PostControllerTests {
         );
         when(postService.getAllPosts()).thenReturn(expectedPosts);
 
-        List<PostDto> actualPosts = postController.getAllPosts();
+        List<PostDto> actualPosts = postController.getAllPosts().getContent();
 
         assertEquals(2, actualPosts.size());
         assertEquals("Title1", actualPosts.get(0).getTitle());

@@ -2,8 +2,8 @@ package com.springapplication.blogappproject.controller;
 
 import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.payload.PostResponse;
+import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
-import com.springapplication.blogappproject.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,27 @@ public class PostController {
      * The controller uses PostService to handle business logic.
      */
     private PostService postService;
+    private PostRepository postRepository;
 
     public PostController(PostService postService) {
         this.postService = postService;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDto>> getAllPostsList() {
+        log.info("Retrieving all posts without pagination");
+        List<PostDto> posts = (List<PostDto>) postService.getAllPosts();
+        log.info("Retrieved {} posts", posts.size());
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
     /*
      * Creates a new blog post.
@@ -35,19 +53,7 @@ public class PostController {
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
-    /*
-     * Retrieves all blog posts.
-     * @return List of PostDto containing all posts.
-     */
-    @GetMapping
-    public PostResponse getAllPosts(
-            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIR, required = false) String sortDir
-    ){
-        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
-    }
+
     /*
      * Retrieves a blog post by its ID.
      * @param id the ID of the post to retrieve.
@@ -105,11 +111,14 @@ public class PostController {
             throw e;
         }
     }
-
-    public List<PostDto> getAllPosts() {
-        log.info("Retrieving all posts");
-        List<PostDto> posts = (List<PostDto>) postService.getAllPosts();
-        log.info("Retrieved {} posts", posts.size());
-        return posts;
+@GetMapping("/test/{id}")
+public ResponseEntity<String> testDatabaseConnection(@PathVariable(name = "id") long id) {
+    try {
+        boolean exists = postRepository.existsById(id);
+        return ResponseEntity.ok("Post with ID " + id + " exists: " + exists);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Error checking post: " + e.getMessage());
     }
+}
 }

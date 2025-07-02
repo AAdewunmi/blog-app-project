@@ -16,7 +16,6 @@ public class CommentDto {
      * This field is used to identify the comment in the database.
      */
     private long id;
-
     private String name;
     private String email;
     private String body;

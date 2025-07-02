@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,7 +61,33 @@ class BlogAppProjectApplicationTests {
     @DisplayName("Direct ModelMapper Bean Instance Test")
     void testModelMapperBean_ReturnsModelMapperInstance() {
         BlogAppProjectApplication application = new BlogAppProjectApplication();
-        ModelMapper modelMapper = application.modelMapper();
-        assertNotNull(modelMapper, "The modelMapper() method should return a non-null instance of ModelMapper");
+        /**
+         * Configuration class for mapping-related beans and settings.
+         * Separates mapping concerns from security configuration.
+         */
+        final ModelMapper[] modelMapper = new ModelMapper[1];
+        @Configuration
+        class MappingConfig {
+
+            /**
+             * Creates and configures a ModelMapper bean with custom settings.
+             * This bean is used for object mapping throughout the application.
+             *
+             * @return configured ModelMapper instance
+             */
+            @Bean
+            public ModelMapper modelMapper() {
+                modelMapper[0] = new ModelMapper();
+                modelMapper[0].getConfiguration()
+                        .setPropertyCondition(context -> context.getSource() != null)
+                        .setSkipNullEnabled(true)
+                        .setAmbiguityIgnored(true)
+                        .setCollectionsMergeEnabled(false)
+                        .setFieldMatchingEnabled(true)
+                        .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+                return modelMapper[0];
+            }
+        }
+        assertNotNull(modelMapper[0], "The modelMapper() method should return a non-null instance of ModelMapper");
     }
 }

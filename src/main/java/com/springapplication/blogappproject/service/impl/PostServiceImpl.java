@@ -2,23 +2,30 @@ package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Post;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
+import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
+
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.HashSet;
 
 /** Implementation of the PostService interface for managing blog posts.
  * Provides methods to create, retrieve, update, and delete posts.
  */
+@Slf4j
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -70,12 +77,29 @@ public class PostServiceImpl implements PostService {
      * @return the PostDto representing the post
      */
     @Override
+    @Transactional(readOnly = true)
     public PostDto getPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Post ", "id: ",  id)
-        );
-        return mapToDTO(post);
+        try {
+            Post post = postRepository.findByIdWithComments(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Post ", "id: ", id));
+        
+        log.debug("Retrieved post: {}", post);
+        if (post.getComments() != null) {
+            log.debug("Number of comments: {}", post.getComments().size());
+            post.getComments().forEach(comment -> 
+                log.debug("Comment: id={}, body={}", comment.getId(), comment.getBody()));
+        }
+        
+        PostDto postDto = mapToDTO(post);
+        log.debug("Mapped DTO comments size: {}", postDto.getComments().size());
+        
+        return postDto;
+    } catch (Exception e) {
+        log.error("Error retrieving post with id: {}", id, e);
+        throw new RuntimeException("Error retrieving post with id: " + id, e);
     }
+}
+
     /**
      * Updates an existing post.
      * @param postDto the data transfer object containing updated post details
@@ -106,24 +130,45 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Object getAllPosts() {
+    public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(this::mapToDTO).collect(Collectors.toList());
+        return posts.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Maps a Post entity to a PostDto.
-     * @param post the Post entity to map
-     * @return the mapped PostDto
-     */
-    private PostDto mapToDTO(Post post) {
-        PostDto postDto = modelMapper.map(post, PostDto.class);
-//        postDto.setId(post.getId());
-//        postDto.setTitle(post.getTitle());
-//        postDto.setContent(post.getContent());
-//        postDto.setDescription(post.getDescription());
-        return postDto;
+
+private PostDto mapToDTO(Post post) {
+    PostDto postDto = new PostDto();
+    postDto.setId(post.getId());
+    postDto.setTitle(post.getTitle());
+    postDto.setDescription(post.getDescription());
+    postDto.setContent(post.getContent());
+    
+    // Initialize comments set if null
+    if (postDto.getComments() == null) {
+        postDto.setComments(new HashSet<>());
     }
+    
+    // Manually map comments
+    if (post.getComments() != null && !post.getComments().isEmpty()) {
+        Set<CommentDto> commentDtos = post.getComments().stream()
+                .map(comment -> {
+                    CommentDto dto = new CommentDto();
+                    dto.setId(comment.getId());
+                    dto.setName(comment.getName());
+                    dto.setEmail(comment.getEmail());
+                    dto.setBody(comment.getBody());
+                    return dto;
+                })
+                .collect(Collectors.toSet());
+        postDto.setComments(commentDtos);
+    }
+    
+    return postDto;
+}
+
+
     /**
      * Maps a PostDto to a Post entity.
      * @param postDto the PostDto to map

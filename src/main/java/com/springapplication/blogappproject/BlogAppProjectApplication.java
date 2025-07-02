@@ -1,5 +1,7 @@
 package com.springapplication.blogappproject;
 
+import org.hibernate.collection.spi.PersistentCollection;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,10 +22,6 @@ public class BlogAppProjectApplication {
      *
      * @return a new instance of ModelMapper
      */
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
     /**
      * The main method that starts the Spring Boot application.
