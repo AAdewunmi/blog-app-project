@@ -37,6 +37,7 @@ public class PostDto {
      * A brief description of the blog post.
      * This field provides a summary or overview of the post's content.
      */
+    @NotEmpty(message = "Description cannot be empty.")
     private String description;
 
     /**
