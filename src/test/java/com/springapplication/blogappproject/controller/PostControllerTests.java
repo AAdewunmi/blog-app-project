@@ -141,4 +141,20 @@ class PostControllerTests {
     private PostDto createTestPostDto(Long id, String title, String content, String description) {
         return new PostDto(id, title, content, description);
     }
+    /**
+     * Tests the updatePost method with a non-existing post ID.
+     * Verifies that an exception is thrown with the correct message.
+     */
+    @Test
+    void shouldThrowExceptionWhenUpdatingNonExistentPost() {
+        when(postService.updatePost(testPostDto, TEST_POST_ID)).thenThrow(new RuntimeException(POST_NOT_FOUND_ERROR));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> postController.updatePost(testPostDto, TEST_POST_ID));
+
+        assertEquals(POST_NOT_FOUND_ERROR, exception.getMessage());
+        verify(postService).updatePost(testPostDto, TEST_POST_ID);
+    }
+
+
 }
