@@ -81,7 +81,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(
-
+            @Valid
             @RequestBody PostDto postDto,
             @PathVariable(name = "id") long id) {
         log.info("Receiving request to update post with id: {}", id);
