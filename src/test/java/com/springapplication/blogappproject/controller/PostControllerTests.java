@@ -156,5 +156,21 @@ class PostControllerTests {
         verify(postService).updatePost(testPostDto, TEST_POST_ID);
     }
 
+    /**
+     * Tests the updatePost method with an invalid PostDto.
+     * Verifies that a validation exception is thrown when provided with invalid data.
+     */
+    @Test
+    void shouldThrowExceptionWhenUpdatingWithInvalidPostDto() {
+        PostDto invalidPostDto = createTestPostDto(TEST_POST_ID, "T", "Short", "Small");
+
+        doThrow(new IllegalArgumentException("Invalid PostDto")).when(postService).updatePost(invalidPostDto, TEST_POST_ID);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> postController.updatePost(invalidPostDto, TEST_POST_ID));
+
+        assertEquals("Invalid PostDto", exception.getMessage());
+        verify(postService).updatePost(invalidPostDto, TEST_POST_ID);
+    }
 
 }
