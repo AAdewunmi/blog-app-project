@@ -5,6 +5,7 @@ import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
 import com.springapplication.blogappproject.utils.AppConstants;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class PostController {
      * @return ResponseEntity containing the created PostDto and HTTP status code.
      */
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
@@ -80,6 +81,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(
+
             @RequestBody PostDto postDto,
             @PathVariable(name = "id") long id) {
         log.info("Receiving request to update post with id: {}", id);
