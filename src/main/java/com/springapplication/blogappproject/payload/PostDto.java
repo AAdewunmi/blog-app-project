@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.payload;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -25,6 +26,7 @@ public class PostDto {
      * This field represents the main heading or name of the blog post.
      */
     @NotEmpty(message = "Title cannot be empty.")
+    @Size(min = 5, max = 255, message = "Title must be between 5 and 255 characters.")
     private String title;
     /**
      * Represents the main textual content of a blog post.
