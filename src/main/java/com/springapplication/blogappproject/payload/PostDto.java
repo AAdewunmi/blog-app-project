@@ -38,6 +38,7 @@ public class PostDto {
      * This field provides a summary or overview of the post's content.
      */
     @NotEmpty(message = "Description cannot be empty.")
+    @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters.")
     private String description;
 
     /**
