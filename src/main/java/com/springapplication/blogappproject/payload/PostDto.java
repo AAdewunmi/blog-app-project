@@ -32,6 +32,8 @@ public class PostDto {
      * Represents the main textual content of a blog post.
      * This field is used to store the full body of the post as a string.
      */
+
+    @NotEmpty(message = "Content cannot be empty.")
     private String content;
     /**
      * A brief description of the blog post.
