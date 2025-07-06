@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.Map;
  * consistent and user-friendly error responses are sent in case of errors.
  */
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Handles the ResourceNotFoundException by constructing a response entity encapsulating error details.
@@ -97,17 +98,13 @@ protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotV
                                                             WebRequest request) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
-        String fieldName = "unknown";
-        String message = "Validation failed";
-        
-        if (error instanceof FieldError fieldError) {
-            fieldName = fieldError.getField();
-            message = fieldError.getDefaultMessage();
-        } else if (error != null) {
-            fieldName = error.getObjectName();
-            message = error.getDefaultMessage();
-        }
-        
+        String fieldName = ((FieldError) error).getField();
+        String message = error.getDefaultMessage();
+
+        FieldError fieldError = (FieldError) error;
+        fieldName = fieldError.getField();
+        message = fieldError.getDefaultMessage();
+
         errors.put(fieldName, message != null ? message : "Validation failed");
     });
 
