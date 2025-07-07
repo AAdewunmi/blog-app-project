@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.controller;
 
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class CommentController {
      */
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentDto> createComment(
+            @Valid
             @PathVariable("postId") long postId,
             @RequestBody CommentDto commentDto) {
 
