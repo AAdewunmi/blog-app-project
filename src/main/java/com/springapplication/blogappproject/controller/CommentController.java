@@ -34,9 +34,8 @@ public class CommentController {
      */
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentDto> createComment(
-            @Valid
             @PathVariable("postId") long postId,
-            @RequestBody CommentDto commentDto) {
+            @Valid @RequestBody CommentDto commentDto) {
 
         CommentDto created = commentService.createComment(postId, commentDto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -76,10 +75,9 @@ public class CommentController {
      */
     @PutMapping("/posts/{postId}/comments/{id}")
     public ResponseEntity<CommentDto> updateComment(
-            @Valid
             @PathVariable("postId") long postId,
             @PathVariable("id") long commentId,
-            @RequestBody CommentDto commentDto) {
+            @Valid @RequestBody CommentDto commentDto) {
         CommentDto updatedComment = commentService.updateComment(postId, commentId, commentDto);
         return new ResponseEntity<>(updatedComment, HttpStatus.OK);
     }
