@@ -41,7 +41,7 @@ public class CommentDto {
      * This field is used for contact or identification purposes.
      */
     @NotEmpty(message = "Email cannot be empty.")
-    //@Email(message = "Invalid email address.")
+    @Email(message = "Invalid email address.")
     private String email;
 
     /**
