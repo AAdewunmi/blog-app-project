@@ -165,7 +165,24 @@ class CommentControllerTest {
         );
     }
 
+    /**
+     * Tests the createComment method with an empty body.
+     * Verifies that it throws ConstraintViolationException for body validation.
+     */
+    @Test
+    void testCreateComment_WithEmptyBody_ShouldThrowException() {
+        // Arrange
+        long postId = 1L;
+        CommentDto invalidDto = new CommentDto("User", "user@example.com", "");
 
+        when(commentService.createComment(eq(postId), any(CommentDto.class)))
+                .thenThrow(new ConstraintViolationException(null));
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () ->
+                commentController.createComment(postId, invalidDto)
+        );
+    }
 
     /**
      * Verifies that getCommentById throws an exception when the comment does not exist.
