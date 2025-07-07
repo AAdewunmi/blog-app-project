@@ -153,16 +153,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return a ResponseEntity containing ErrorDetails with a validation failure message, specific
      *         validation errors, and an HTTP status of BAD_REQUEST
      */
-    // Add this new method
-    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDetails> handleValidationExceptions(
-            jakarta.validation.ConstraintViolationException ex,
+            MethodArgumentNotValidException ex,
             WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach((violation) -> {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            // Add debugging information
+            System.out.println("Field: " + fieldName);
+            System.out.println("Value: " + ((FieldError) error).getRejectedValue());
+            System.out.println("Message: " + errorMessage);
+
             errors.put(fieldName, errorMessage);
         });
 
