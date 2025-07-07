@@ -92,30 +92,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
  *         with a BAD_REQUEST HTTP status
  */
 
+@Override
 protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                            HttpHeaders headers,
-                                                            HttpStatusCode status,
-                                                            WebRequest request) {
+                                                              HttpHeaders headers,
+                                                              HttpStatusCode status,
+                                                              WebRequest request) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
-        String fieldName = ((FieldError) error).getField();
-        String message = error.getDefaultMessage();
+        String fieldName;
+        String message;
 
-        FieldError fieldError = (FieldError) error;
-        fieldName = fieldError.getField();
-        message = fieldError.getDefaultMessage();
+        if (error instanceof FieldError) {
+            FieldError fieldError = (FieldError) error;
+            fieldName = fieldError.getField();
+            message = fieldError.getDefaultMessage();
+        } else {
+            fieldName = error.getObjectName();
+            message = error.getDefaultMessage();
+        }
 
-        errors.put(fieldName, message != null ? message : "Validation failed");
+        errors.put(fieldName, message);
     });
 
     ErrorDetails errorDetails = new ErrorDetails(
-        new Date(),
-        "Validation failed",
-        errors.toString()
+            new Date(),
+            "Validation failed",
+            errors.toString()
     );
-    
+
     return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
 }
+
 
     /**
      * Handles exceptions of type AccessDeniedException.
@@ -133,5 +140,28 @@ protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotV
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
+
+    // Add this new method
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public ResponseEntity<ErrorDetails> handleValidationExceptions(
+            jakarta.validation.ConstraintViolationException ex,
+            WebRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach((violation) -> {
+            String fieldName = violation.getPropertyPath().toString();
+            String errorMessage = violation.getMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                new Date(),
+                "Validation failed",
+                errors.toString()
+        );
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 
 }
