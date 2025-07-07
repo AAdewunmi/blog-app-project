@@ -49,7 +49,7 @@ public class CommentDto {
      * This field contains the actual text of the comment.
      */
     @NotEmpty(message = "Comment body cannot be empty.")
-    //@Size(min = 10, max = 500, message = "Comment body must be between 10 and 500 characters.")
+    @Size(min = 10, max = 500, message = "Comment body must be between 10 and 500 characters.")
     private String body;
 
 }
