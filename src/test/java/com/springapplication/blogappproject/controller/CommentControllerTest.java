@@ -3,6 +3,7 @@ package com.springapplication.blogappproject.controller;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.service.CommentService;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,6 +145,27 @@ class CommentControllerTest {
         assertNotNull(response.getBody());
         assertEquals(comment, response.getBody());
     }
+
+    /**
+     * Tests the createComment method with an invalid CommentDto.
+     * Verifies that it throws ConstraintViolationException for validation errors.
+     */
+    @Test
+    void testCreateComment_WithInvalidDto_ShouldReturnValidationErrors() {
+        // Arrange
+        long postId = 1L;
+        CommentDto invalidDto = new CommentDto("", "invalid-email", "short");
+
+        when(commentService.createComment(eq(postId), any(CommentDto.class)))
+                .thenThrow(new ConstraintViolationException(null));
+
+        // Act & Assert
+        assertThrows(ConstraintViolationException.class, () ->
+            commentController.createComment(postId, invalidDto)
+        );
+    }
+
+
 
     /**
      * Verifies that getCommentById throws an exception when the comment does not exist.

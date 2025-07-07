@@ -52,4 +52,6 @@ public class CommentDto {
     @Size(min = 10, max = 500, message = "Comment body must be between 10 and 500 characters.")
     private String body;
 
+    public CommentDto(String s, String s1, String aShort) {
+    }
 }
