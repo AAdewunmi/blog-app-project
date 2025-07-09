@@ -24,24 +24,43 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
+    
     /**
-     * Handles the ResourceNotFoundException by constructing a response entity encapsulating error details.
-     * This method is triggered when a ResourceNotFoundException is thrown, and it generates
-     * a standardized error response with details such as timestamp, message, and additional information.
+     * Handles exceptions of type {@code MethodArgumentNotValidException}.
+     * This method is triggered when a method argument annotated with validation annotations fails validation.
+     * It extracts validation error details, including the field name and default error message,
+     * and creates an {@code ErrorDetails} object containing these details. The response entity
+     * is returned with a {@code BAD_REQUEST} HTTP status.
      *
-     * @param exception the ResourceNotFoundException that was thrown when a requested resource could not be found
-     * @param webRequest the current web request, used to extract additional context or description of the request
-     * @return a ResponseEntity containing ErrorDetails and an HTTP status of NOT_FOUND
+     * @param ex the {@code MethodArgumentNotValidException} that was thrown
+     * @param headers the HTTP headers for the current request
+     * @param status the HTTP status code of the response
+     * @param request the current web request
+     * @return a {@code ResponseEntity} containing the {@code ErrorDetails} object and a {@code BAD_REQUEST} HTTP status
      */
-    // handle specific exceptions
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
-                                                                        WebRequest webRequest){
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
-                webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        
+        ErrorDetails errorDetails = new ErrorDetails(
+            new Date(),
+            "Validation Failed",
+            errors.toString()
+        );
+        
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
 
     /**
      * Handles exceptions of type {@code BlogAPIException}.
@@ -79,51 +98,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-/**
- * Handles the validation errors for method arguments annotated with validation constraints.
- * This method is invoked when a MethodArgumentNotValidException is thrown, typically during
- * validation of request body fields in REST APIs.
- *
- * @param ex the MethodArgumentNotValidException containing details about the validation errors
- * @param headers the HTTP headers associated with the request
- * @param status the HTTP status code determined by the response status
- * @param request the WebRequest object that encapsulates details of the web request
- * @return a ResponseEntity object containing error details (timestamp, generic error message, and validation errors)
- *         with a BAD_REQUEST HTTP status
- */
-
-//@Override
-//protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//                                                              HttpHeaders headers,
-//                                                              HttpStatusCode status,
-//                                                              WebRequest request) {
-//    Map<String, String> errors = new HashMap<>();
-//    ex.getBindingResult().getAllErrors().forEach((error) -> {
-//        String fieldName;
-//        String message;
-//
-//        if (error instanceof FieldError) {
-//            FieldError fieldError = (FieldError) error;
-//            fieldName = fieldError.getField();
-//            message = fieldError.getDefaultMessage();
-//        } else {
-//            fieldName = error.getObjectName();
-//            message = error.getDefaultMessage();
-//        }
-//
-//        errors.put(fieldName, message);
-//    });
-//
-//    ErrorDetails errorDetails = new ErrorDetails(
-//            new Date(),
-//            "Validation failed",
-//            errors.toString()
-//    );
-//
-//    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-//}
-
-
     /**
      * Handles exceptions of type AccessDeniedException.
      * This method constructs an ErrorDetails object containing the timestamp, message,
@@ -142,78 +116,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handles the jakarta.validation.ConstraintViolationException by constructing a response entity
-     * encapsulating error details about the validation failures.
-     * This method is triggered when a ConstraintViolationException is thrown, collecting validation
-     * errors and providing a standardized error response with details such as timestamp, message,
-     * and validation-specific information.
+     * Handles exceptions of type ResourceNotFoundException.
+     * This method creates an ErrorDetails object containing information about the resource
+     * that was not found and returns it with an HTTP NOT_FOUND status.
      *
-     * @param ex the ConstraintViolationException containing details about the validation failures
-     * @param request the WebRequest object that encapsulates details of the web request
-     * @return a ResponseEntity containing ErrorDetails with a validation failure message, specific
-     *         validation errors, and an HTTP status of BAD_REQUEST
+     * @param exception the ResourceNotFoundException that was thrown
+     * @param webRequest the current web request in which the exception occurred
+     * @return a ResponseEntity containing the error details and NOT_FOUND status
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDetails> handleValidationExceptions(
-            MethodArgumentNotValidException ex,
-            WebRequest request) {
-
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            // Add debugging information
-            System.out.println("Field: " + fieldName);
-            System.out.println("Value: " + ((FieldError) error).getRejectedValue());
-            System.out.println("Message: " + errorMessage);
-
-            errors.put(fieldName, errorMessage);
-        });
-
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
+                                                                 WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(
-                new Date(),
-                "Validation failed",
-                errors.toString()
+            new Date(),
+            exception.getMessage(),
+            webRequest.getDescription(false)
         );
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
-
-
-    /**
-     * Handles validation failures during method argument validation in the request body.
-     * This method is triggered when a {@code MethodArgumentNotValidException} is thrown,
-     * capturing validation errors from the {@code BindingResult}, and constructing a
-     * detailed error response in a standardized format.
-     *
-     * @param ex the exception thrown when a method argument is deemed invalid
-     * @param headers the HTTP headers of the request
-     * @param status the HTTP status code of the failed request
-     * @param request the web request context in which the exception occurred
-     * @return a {@code ResponseEntity} containing the error details and an HTTP status of BAD_REQUEST
-     */
-    // Add this method as well
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatusCode status,
-            WebRequest request) {
-
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach((error) -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
-
-        ErrorDetails errorDetails = new ErrorDetails(
-                new Date(),
-                "Validation failed",
-                errors.toString()
-        );
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
-
-
-
 }
