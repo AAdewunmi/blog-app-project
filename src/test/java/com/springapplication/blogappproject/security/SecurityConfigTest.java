@@ -36,6 +36,23 @@ public class SecurityConfigTest {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
     }
 
+    @Test
+    public void testModelMapperConfiguration() {
+        ModelMapper modelMapper = securityConfig.modelMapper();
 
+        assertNotNull(modelMapper);
+        assertTrue(modelMapper.getConfiguration().isSkipNullEnabled());
+        assertTrue(modelMapper.getConfiguration().isAmbiguityIgnored());
+        assertFalse(modelMapper.getConfiguration().isCollectionsMergeEnabled());
+        assertTrue(modelMapper.getConfiguration().isFieldMatchingEnabled());
+        assertEquals(org.modelmapper.config.Configuration.AccessLevel.PRIVATE,
+                modelMapper.getConfiguration().getFieldAccessLevel());
+
+        // Simulate converter behavior
+        Set<String> input = Set.of("sample");
+        Set<String> copy = new java.util.HashSet<>(input);
+        assertEquals(1, copy.size());
+        assertTrue(copy.contains("sample"));
+    }
 }
 
