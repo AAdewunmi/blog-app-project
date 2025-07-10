@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import org.springframework.http.HttpMethod;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,18 +38,19 @@ public class SecurityConfig {
      * @return the configured {@code SecurityFilterChain} instance
      * @throws Exception if an error occurs while building the filter chain
      */
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable()) // Disable CSRF protection for simplicity
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
-                ).httpBasic(Customizer.withDefaults()); // Enable HTTP Basic authentication
+                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()  // Public GET access
+                        .anyRequest().authenticated()                            // All others require auth
+                )
+                .httpBasic(Customizer.withDefaults()); // Enable HTTP Basic authentication
                 //.formLogin(form -> form.permitAll());  // Enable default Spring Boot login form
-
-
         return http.build();
     }
-
     /**
      * Creates and provides a PasswordEncoder bean configured with BCrypt hashing algorithm.
      * This is used to securely encrypt and verify passwords in the application.
