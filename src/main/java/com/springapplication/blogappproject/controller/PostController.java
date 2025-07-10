@@ -80,7 +80,7 @@ public class PostController {
      * @param id the ID of the post to update.
      * @return ResponseEntity containing the updated PostDto and HTTP status code.
      */
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(
             @Valid
@@ -102,7 +102,7 @@ public class PostController {
      * @param id the ID of the post to delete.
      * @return ResponseEntity with HTTP status code indicating the result of the deletion.
      */
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostById(@PathVariable(name = "id") long id) {
         log.info("Receiving request to delete post with id: {}", id);
