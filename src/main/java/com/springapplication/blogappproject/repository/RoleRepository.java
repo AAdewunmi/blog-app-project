@@ -26,5 +26,5 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
      * @param name the name of the role to check
      * @return true if a role with the given name exists, false otherwise
      */
-    // Boolean existsByName(String name);
+    Boolean existsByName(String name);
 }
