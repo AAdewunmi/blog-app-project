@@ -73,6 +73,22 @@ class CustomUserDetailsServiceTest {
                 .findByUsernameOrEmail("test@example.com", "test@example.com");
     }
 
+    /**
+     * Tests the functionality of the CustomUserDetailsService's loadUserByUsername method
+     * when a user is not found in the repository.
+     *
+     * This test ensures that:
+     * 1. The repository method findByUsernameOrEmail is invoked with the correct parameters.
+     * 2. A UsernameNotFoundException is thrown when no user exists with the specified username or email.
+     * 3. The exception message correctly indicates that the user was not found.
+     *
+     * Test Steps:
+     * - Mock the UserRepository to return an empty Optional when called with a non-existent username or email.
+     * - Initialize the CustomUserDetailsService with the mocked UserRepository.
+     * - Call the loadUserByUsername method with a username or email that does not exist in the system.
+     * - Assert that the expected exception is thrown.
+     * - Verify that the repository method is invoked exactly once with the correct arguments.
+     */
     @Test
     void testLoadUserByUsername_UserNotFound() {
         // Arrange
@@ -92,5 +108,51 @@ class CustomUserDetailsServiceTest {
 
         verify(mockUserRepository, times(1))
                 .findByUsernameOrEmail("nonexistent@example.com", "nonexistent@example.com");
+    }
+
+    /**
+     * Tests the behavior of the `CustomUserDetailsService` class's `loadUserByUsername` method
+     * when a user exists in the repository but does not have any assigned roles.
+     *
+     * This test verifies that:
+     * 1. The repository method `findByUsernameOrEmail` is invoked with the correct parameters.
+     * 2. A non-null `UserDetails` object is returned.
+     * 3. The username and password in the returned `UserDetails` object match the corresponding fields of the user.
+     * 4. The `UserDetails` object contains an empty list of authorities since the user has no roles.
+     *
+     * Test Steps:
+     * - Mock the `UserRepository` to return a `User` entity with no roles assigned.
+     * - Instantiate the `CustomUserDetailsService` with the mocked `UserRepository`.
+     * - Invoke the `loadUserByUsername` method with a valid username or email.
+     * - Assert that the returned `UserDetails` object is not null.
+     * - Assert that the username and password of the `UserDetails` object match the mocked user's email and password.
+     * - Assert that the authorities of the `UserDetails` object are empty.
+     * - Verify that the `findByUsernameOrEmail` method of the repository is called exactly once with the correct arguments.
+     */
+    @Test
+    void testLoadUserByUsername_UserWithNoRoles() {
+        // Arrange
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        CustomUserDetailsService service = new CustomUserDetailsService(mockUserRepository);
+
+        User mockUser = new User();
+        mockUser.setEmail("noroles@example.com");
+        mockUser.setPassword("password123");
+        mockUser.setRoles(Collections.emptySet());
+
+        when(mockUserRepository.findByUsernameOrEmail("noroles@example.com", "noroles@example.com"))
+                .thenReturn(Optional.of(mockUser));
+
+        // Act
+        UserDetails userDetails = service.loadUserByUsername("noroles@example.com");
+
+        // Assert
+        assertNotNull(userDetails);
+        assertEquals(mockUser.getEmail(), userDetails.getUsername());
+        assertEquals(mockUser.getPassword(), userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().isEmpty());
+
+        verify(mockUserRepository, times(1))
+                .findByUsernameOrEmail("noroles@example.com", "noroles@example.com");
     }
 }
