@@ -72,4 +72,25 @@ class CustomUserDetailsServiceTest {
         verify(mockUserRepository, times(1))
                 .findByUsernameOrEmail("test@example.com", "test@example.com");
     }
+
+    @Test
+    void testLoadUserByUsername_UserNotFound() {
+        // Arrange
+        UserRepository mockUserRepository = mock(UserRepository.class);
+        CustomUserDetailsService service = new CustomUserDetailsService(mockUserRepository);
+
+        when(mockUserRepository.findByUsernameOrEmail("nonexistent@example.com", "nonexistent@example.com"))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        UsernameNotFoundException exception = assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.loadUserByUsername("nonexistent@example.com")
+        );
+
+        assertEquals("User not found with username or email: nonexistent@example.com", exception.getMessage());
+
+        verify(mockUserRepository, times(1))
+                .findByUsernameOrEmail("nonexistent@example.com", "nonexistent@example.com");
+    }
 }
