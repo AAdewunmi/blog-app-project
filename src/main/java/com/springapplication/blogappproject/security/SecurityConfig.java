@@ -4,7 +4,10 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -30,6 +33,42 @@ import java.util.Set;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Represents a {@link UserDetailsService} implementation that is used for retrieving
+     * user-specific data during authentication and authorization processes.
+     *
+     * This variable is utilized to manage user details, including loading user-specific
+     * information from a data source for authentication purposes. It is essential in
+     * the Spring Security framework to support various functionalities such as custom
+     * user management and integration with external user details sources.
+     */
+    private UserDetailsService userDetailsService;
+
+    /**
+     * Constructs a SecurityConfig instance using the provided UserDetailsService.
+     *
+     * @param userDetailsService the UserDetailsService used for loading user-specific data
+     */
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    /**
+     * Provides an {@link AuthenticationManager} bean configured with the application's authentication settings.
+     *
+     * This method retrieves the {@link AuthenticationManager} instance from the provided
+     * {@link AuthenticationConfiguration}, which is responsible for managing authentication
+     * processes within the application.
+     *
+     * @param configuration the {@link AuthenticationConfiguration} containing the authentication settings
+     *                       and required configurations for the application
+     * @return the {@link AuthenticationManager} instance to be used for authentication processes
+     * @throws Exception if an error occurs while retrieving the {@link AuthenticationManager}
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
     /**
      * Configures a filter chain for HTTP security settings in a Spring Boot application.
      * This method enables authentication for all HTTP requests and provides a default login form.
