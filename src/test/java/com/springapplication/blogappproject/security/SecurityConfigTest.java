@@ -1,20 +1,24 @@
 package com.springapplication.blogappproject.security;
 
+import com.springapplication.blogappproject.service.CustomUserDetailsService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test class for SecurityConfig.
@@ -38,34 +42,14 @@ public class SecurityConfigTest {
      * - A ModelMapper bean for flexible object-to-object mapping with customization options like null handling,
      *   field matching, and disabling collections merging.
      */
-    private final SecurityConfig securityConfig = new SecurityConfig();
+    private CustomUserDetailsService customUserDetailsService;
+    private SecurityConfig securityConfig = new SecurityConfig(customUserDetailsService);
+    @BeforeEach
+    public void setUp() {
+        customUserDetailsService = mock(CustomUserDetailsService.class);
+        securityConfig = new SecurityConfig(customUserDetailsService);
+    }
 
-    /**
-     * Tests the functionality of the userDetailsService bean in the SecurityConfig class.
-     *
-     * This test ensures that the UserDetailsService correctly loads the user details for
-     * the user with username "admin" and validates the following:
-     * 1. The UserDetails object is not null.
-     * 2. The username of the returned UserDetails matches the expected value "admin".
-     * 3. The password for the user matches the expected value when encoded.
-     * 4. The user has the required authorities "ROLE_USER" and "ROLE_ADMIN".
-     *
-     * This test uses a BCryptPasswordEncoder to validate the password encoding.
-     */
-//    @Test
-//    public void testUserDetailsService() {
-//        PasswordEncoder encoder = new BCryptPasswordEncoder();
-//        UserDetailsService service = securityConfig.userDetailsService(encoder);
-//
-//        UserDetails admin = service.loadUserByUsername("admin");
-//        assertNotNull(admin);
-//        assertEquals("admin", admin.getUsername());
-//        assertTrue(encoder.matches("secret", admin.getPassword()));
-//        assertTrue(admin.getAuthorities().stream()
-//                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
-//        assertTrue(admin.getAuthorities().stream()
-//                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
-//    }
 
     /**
      * Tests the configuration of the {@link ModelMapper} bean provided by the {@link SecurityConfig} class.
