@@ -52,20 +52,20 @@ public class SecurityConfigTest {
      *
      * This test uses a BCryptPasswordEncoder to validate the password encoding.
      */
-    @Test
-    public void testUserDetailsService() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        UserDetailsService service = securityConfig.userDetailsService(encoder);
-
-        UserDetails admin = service.loadUserByUsername("admin");
-        assertNotNull(admin);
-        assertEquals("admin", admin.getUsername());
-        assertTrue(encoder.matches("secret", admin.getPassword()));
-        assertTrue(admin.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
-        assertTrue(admin.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
-    }
+//    @Test
+//    public void testUserDetailsService() {
+//        PasswordEncoder encoder = new BCryptPasswordEncoder();
+//        UserDetailsService service = securityConfig.userDetailsService(encoder);
+//
+//        UserDetails admin = service.loadUserByUsername("admin");
+//        assertNotNull(admin);
+//        assertEquals("admin", admin.getUsername());
+//        assertTrue(encoder.matches("secret", admin.getPassword()));
+//        assertTrue(admin.getAuthorities().stream()
+//                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+//        assertTrue(admin.getAuthorities().stream()
+//                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
+//    }
 
     /**
      * Tests the configuration of the {@link ModelMapper} bean provided by the {@link SecurityConfig} class.

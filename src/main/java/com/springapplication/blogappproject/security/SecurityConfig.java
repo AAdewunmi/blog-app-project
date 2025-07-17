@@ -45,6 +45,17 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
 
     /**
+     * Default constructor for the SecurityConfig class.
+     *
+     * Constructs a SecurityConfig instance with no specific initialization.
+     * This constructor can be used when the application does not require
+     * a custom UserDetailsService or other specific configurations at the time
+     * of SecurityConfig instantiation.
+     */
+    public SecurityConfig() {
+    }
+
+    /**
      * Constructs a SecurityConfig instance using the provided UserDetailsService.
      *
      * @param userDetailsService the UserDetailsService used for loading user-specific data
@@ -114,15 +125,15 @@ public class SecurityConfig {
      * @param passwordEncoder the {@link PasswordEncoder} used for encoding the user's password
      * @return a {@link UserDetailsService} instance containing the in-memory defined user
      */
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("secret"))
-                .roles("USER", "ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//        UserDetails user = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder.encode("secret"))
+//                .roles("USER", "ADMIN")
+//                .build();
+//        return new InMemoryUserDetailsManager(user);
+//    }
 
     /**
      * Configures and provides a {@link ModelMapper} bean for object mapping tasks.
