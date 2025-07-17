@@ -15,5 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class PasswordGeneratorEncoderTest {
 
+    @Test
+    void testPasswordEncodingForAdmin() {
+        String password = "admin";
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        String encodedPassword = passwordEncoder.encode(password);
+
+        assertNotNull(encodedPassword, "Encoded password should not be null");
+        assertTrue(passwordEncoder.matches(password, encodedPassword),
+                "Encoded password should match the raw password when verified");
+    }
 
 }
