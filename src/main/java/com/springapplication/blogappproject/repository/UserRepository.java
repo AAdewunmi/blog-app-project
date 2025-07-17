@@ -2,6 +2,7 @@ package com.springapplication.blogappproject.repository;
 
 import com.springapplication.blogappproject.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
  * of username and email. Additionally, it provides methods to check the existence of users
  * based on their username or email.
  */
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
@@ -58,5 +60,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return true if a user with the given email exists, false otherwise
      */
     Boolean existsByEmail(String email);
+
 
 }
