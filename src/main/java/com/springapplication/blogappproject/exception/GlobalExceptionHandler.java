@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * GlobalExceptionHandler is a class annotated with @ControllerAdvice that provides centralized exception handling
@@ -133,5 +135,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             webRequest.getDescription(false)
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handles exceptions of type AuthenticationException.
+     * This method creates an ErrorDetails object containing the timestamp, exception message,
+     * and additional details derived from the WebRequest. The response entity is returned
+     * with an HTTP UNAUTHORIZED status.
+     *
+     * @param exception the AuthenticationException that was thrown
+     * @param webRequest the current web request providing context and additional information
+     * @return a ResponseEntity containing the ErrorDetails object and an UNAUTHORIZED HTTP status
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorDetails> handleAuthenticationException(AuthenticationException exception,
+                                                                      WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                new Date(),
+                "Authentication failed: " + exception.getMessage(),
+                webRequest.getDescription(false)
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 }

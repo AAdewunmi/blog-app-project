@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.security;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -41,4 +42,33 @@ public class SecurityConfig {
         
         return http.build();
     }
+
+    /**
+     * Defines a {@link ModelMapper} bean with custom configuration settings for object mapping tasks.
+     *
+     * The configured {@link ModelMapper}:
+     * - Ignores null source values during mapping.
+     * - Skips ambiguous mappings by ignoring them.
+     * - Disables automatic merging of collections during mapping.
+     * - Enables field matching for mapping fields with similar names.
+     * - Uses {@code PRIVATE} access level for accessing fields.
+     *
+     * This bean facilitates efficient and flexible object mapping while ensuring mappings adhere
+     * to the specified configuration.
+     *
+     * @return a configured {@link ModelMapper} instance customized for detailed and efficient object mapping tasks
+     */
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setPropertyCondition(context -> context.getSource() != null)
+                .setSkipNullEnabled(true)
+                .setAmbiguityIgnored(true)
+                .setCollectionsMergeEnabled(false)
+                .setFieldMatchingEnabled(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+        return modelMapper;
+    }
+
 }
