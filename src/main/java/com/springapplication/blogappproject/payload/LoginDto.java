@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.payload;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +21,13 @@ public class LoginDto {
      * This field can store either a username or an email address,
      * depending on the authentication method chosen.
      */
+    @NotEmpty(message = "Username/Email cannot be empty")
     private String usernameOrEmail;
     /**
      * Represents the user's password used for authentication.
      * This field stores the password provided during login
      * and is a required credential for user verification.
      */
+    @NotEmpty(message = "Password cannot be empty")
     private String password;
 }
