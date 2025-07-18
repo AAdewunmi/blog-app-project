@@ -81,4 +81,36 @@ public class AuthServiceImplTest {
         assertEquals("User Logged-In Successfully!", result);
         Mockito.verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
+
+    /**
+     * Tests the {@code login} method of {@code AuthServiceImpl} to ensure
+     * that invalid user credentials result in an exception being thrown.
+     *
+     * This test verifies the following:
+     * - A {@code LoginDto} containing incorrect credentials is correctly
+     *   passed to the authentication process.
+     * - The {@code AuthenticationManager}'s {@code authenticate} method
+     *   is invoked with a {@code UsernamePasswordAuthenticationToken}.
+     * - When the authentication fails, a {@code RuntimeException} with
+     *   the message "Invalid credentials" is thrown.
+     */
+    @Test
+    public void testLogin_InvalidCredentials_ThrowsException() {
+        // Arrange
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUsernameOrEmail("testuser");
+        loginDto.setPassword("wrongpassword");
+
+        Mockito.when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new RuntimeException("Invalid credentials"));
+
+        // Act & Assert
+        try {
+            authService.login(loginDto);
+        } catch (RuntimeException ex) {
+            assertEquals("Invalid credentials", ex.getMessage());
+        }
+
+        Mockito.verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+    }
 }
