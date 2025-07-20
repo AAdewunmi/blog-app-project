@@ -1,6 +1,7 @@
 package com.springapplication.blogappproject.service;
 
 import com.springapplication.blogappproject.payload.LoginDto;
+import com.springapplication.blogappproject.payload.RegisterDto;
 
 /**
  * Service interface for managing user authentication.
@@ -17,5 +18,14 @@ public interface AuthService  {
      * @return a string representing the JWT token if authentication is successful
      */
     String login(LoginDto loginDto);
+
+    /**
+     * Registers a new user with the provided registration details.
+     * Accepts a RegisterDto object containing user information such as name, username, email, and password.
+     *
+     * @param registerDto the data transfer object containing user registration details
+     * @return a string indicating the result of the registration process
+     */
+    String register(RegisterDto registerDto);
 
 }
