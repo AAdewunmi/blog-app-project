@@ -1,6 +1,7 @@
 package com.springapplication.blogappproject.controller;
 
 import com.springapplication.blogappproject.payload.LoginDto;
+import com.springapplication.blogappproject.payload.RegisterDto;
 import com.springapplication.blogappproject.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,19 @@ public class AuthController {
     @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
         String response = authService.login(loginDto);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Handles user registration by accepting user details in the form of a RegisterDto
+     * and returning a response indicating the result of the registration process.
+     *
+     * @param registerDto the data transfer object containing user registration details such as name, username, email, and password
+     * @return a ResponseEntity containing a message indicating the result of the registration process
+     */
+    @PostMapping(value = {"/register", "/signup"})
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+        String response = authService.register(registerDto);
         return ResponseEntity.ok(response);
     }
 }

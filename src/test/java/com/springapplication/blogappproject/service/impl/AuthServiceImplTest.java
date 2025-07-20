@@ -55,12 +55,50 @@ public class AuthServiceImplTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+         /**
+          * Mocked instance of {@code UserRepository} used for testing purposes.
+          * This mock replaces the actual {@code UserRepository} implementation
+          * in test cases, allowing simulation of its behavior without interacting
+          * with the actual data source.
+          *
+          * The mocked repository is primarily used to test and verify the behavior
+          * of the {@code AuthServiceImpl} methods, such as {@code register} and {@code login},
+          * in scenarios that involve user data operations like retrieval, checking existence,
+          * or saving users.
+          *
+          * This allows comprehensive testing of application logic while isolating it
+          * from external dependencies.
+          */
          @Mock
          private UserRepository userRepository;
 
+         /**
+          * Mocked instance of {@code RoleRepository} used for testing purposes in {@code AuthServiceImplTest}.
+          *
+          * This mock is utilized to simulate interactions with the database for role-related operations,
+          * such as querying roles or verifying their existence, without the need for an actual database connection.
+          *
+          * The {@code RoleRepository} provides methods for retrieving and interacting with role entities,
+          * including finding roles by name and checking their existence.
+          */
          @Mock
          private RoleRepository roleRepository;
 
+         /**
+          * Mocked instance of the {@code PasswordEncoder} interface used for testing purposes in the
+          * {@code AuthServiceImplTest} class.
+          *
+          * This field is utilized to simulate password encoding functionality during unit tests, ensuring
+          * that password encoding logic can be verified without requiring an actual implementation
+          * or external dependencies.
+          *
+          * Common use cases include:
+          * - Verifying that passwords are encoded correctly before persisting them.
+          * - Simulating behaviors or conditions for password encoding during tests.
+          *
+          * The behavior of this mock object can be customized using mocking frameworks, allowing controlled
+          * responses to method calls as needed for specific test scenarios.
+          */
          @Mock
          private PasswordEncoder passwordEncoder;
 

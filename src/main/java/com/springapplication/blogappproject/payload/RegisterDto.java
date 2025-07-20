@@ -39,4 +39,7 @@ public class RegisterDto {
      * This field stores the password, which must be kept secure and confidential.
      */
     private String password;
+
+    public RegisterDto(String username, String mail, String password) {
+    }
 }
