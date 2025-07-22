@@ -62,4 +62,39 @@ class JwtAuthenticationEntryPointTest {
                 "Unauthorized: " + mockException.getMessage());
     }
 
+    /**
+     * Tests the behavior of the {@link JwtAuthenticationEntryPoint#commence(HttpServletRequest, HttpServletResponse, AuthenticationException)}
+     * method when handling unauthorized access attempts where the {@link AuthenticationException#getMessage()} returns null.
+     *
+     * This test ensures that the method sends an HTTP 401 Unauthorized error response with a default message pattern
+     * where "Unauthorized: null" is appended to the response.
+     *
+     * Key validations:
+     * - Ensures the `sendError` method of the {@link HttpServletResponse} object is invoked with the correct
+     *   HTTP status code ({@code HttpServletResponse.SC_UNAUTHORIZED}).
+     * - Verifies that the error message correctly appends a null value in the absence of a specific exception message.
+     *
+     * This test confirms that the {@link JwtAuthenticationEntryPoint} implements a consistent behavior for edge cases where
+     * an {@link AuthenticationException} does not contain a message.
+     *
+     * @throws IOException if an input or output error occurs while sending the error response
+     * @throws ServletException if an error occurs during request or response processing
+     */
+    @Test
+    void testCommence_NullExceptionMessage_SendsUnauthorizedErrorResponse() throws IOException, ServletException {
+        // Arrange
+        JwtAuthenticationEntryPoint entryPoint = new JwtAuthenticationEntryPoint();
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+        AuthenticationException mockException = mock(AuthenticationException.class);
+
+        when(mockException.getMessage()).thenReturn(null);
+
+        // Act
+        entryPoint.commence(mockRequest, mockResponse, mockException);
+
+        // Assert
+        verify(mockResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: null");
+    }
+
 }
