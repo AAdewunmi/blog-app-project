@@ -298,4 +298,50 @@ public class JwtTokenProviderTest {
 
         assertEquals("Invalid JWT signature", exception.getMessage(), "The error message should indicate the token is unsupported.");
     }
+
+    /**
+     * Tests the `validateToken` method with a null or empty JWT.
+     *
+     * This test verifies that the `validateToken` method properly handles null or empty tokens
+     * by throwing the appropriate exception (`BlogAPIException`) with the correct error message.
+     *
+     * Steps performed in the test:
+     * - A `JwtTokenProvider` instance is initialized with necessary parameters.
+     * - A null token is passed to the `validateToken` method, which is expected to throw a `BlogAPIException`.
+     * - The exception message is validated to confirm it specifies that the token is null or empty.
+     * - An empty string token is passed to the `validateToken` method, which is also expected to throw a `BlogAPIException`.
+     * - The exception message for the empty token is validated to ensure it indicates the token is null or empty.
+     *
+     * Preconditions:
+     * - A properly initialized `JwtTokenProvider` instance with the required properties (`jwtSecret`, `jwtExpirationDate`).
+     *
+     * Postconditions:
+     * - The `validateToken` method throws a `BlogAPIException` with the message "Jwt claims string is null or empty"
+     *   for both null and empty token inputs.
+     */
+    @Test
+    public void testValidateToken_nullOrEmptyToken() {
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = jwtExpirationDate;
+
+        // Validate a null token and expect an exception
+        BlogAPIException nullException = org.junit.jupiter.api.Assertions.assertThrows(
+                BlogAPIException.class,
+                () -> jwtTokenProvider.validateToken(null),
+                "Expected an exception for null token."
+        );
+
+        assertEquals("Jwt claims string is null or empty", nullException.getMessage(), "The error message should indicate the token is null or empty.");
+
+        // Validate an empty token and expect an exception
+        BlogAPIException emptyException = org.junit.jupiter.api.Assertions.assertThrows(
+                BlogAPIException.class,
+                () -> jwtTokenProvider.validateToken(""),
+                "Expected an exception for an empty token."
+        );
+
+        assertEquals("Jwt claims string is null or empty", emptyException.getMessage(), "The error message should indicate the token is null or empty.");
+    }
 }
