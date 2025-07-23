@@ -252,4 +252,50 @@ public class JwtTokenProviderTest {
 
         assertEquals("Invalid JWT Token", exception.getMessage(), "The error message should indicate the token is malformed.");
     }
+
+    /**
+     * Tests the `validateToken` method with an unsupported JSON Web Token (JWT).
+     *
+     * This test ensures that the `validateToken` method correctly identifies and rejects
+     * an unsupported JWT. Specifically, it validates that the method throws a
+     * `BlogAPIException` with the message "Unsupported JWT token" when a token with an
+     * unsupported structure or signature is presented.
+     *
+     * Steps performed in the test:
+     * - A `JwtTokenProvider` instance is created and initialized with the required
+     *   properties (e.g., `jwtSecret` and `jwtExpirationDate`).
+     * - An unsupported token is created by tampering with its signature to ensure it
+     *   does not conform to a valid JWT structure or signature.
+     * - The `validateToken` method is called with the unsupported token, and it
+     *   is expected to throw a `BlogAPIException`.
+     * - The exception's message is validated to confirm it specifies that the token is
+     *   unsupported.
+     *
+     * Preconditions:
+     * - A properly initialized `JwtTokenProvider` instance with a valid JWT secret
+     *   and expiration configuration.
+     *
+     * Postconditions:
+     * - The `validateToken` method throws a `BlogAPIException` with the message
+     *   "Unsupported JWT token" when an unsupported token is passed.
+     */
+    @Test
+    public void testValidateToken_unsupportedToken() {
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = jwtExpirationDate;
+
+        // Generate an unsupported token (tamper with encoding)
+        String unsupportedToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1bnN1cHBvcnRlZFVzZXIifQ.invalid_signature";
+
+        // Validate the token and expect an exception
+        BlogAPIException exception = org.junit.jupiter.api.Assertions.assertThrows(
+                BlogAPIException.class,
+                () -> jwtTokenProvider.validateToken(unsupportedToken),
+                "Expected an exception for unsupported token."
+        );
+
+        assertEquals("Invalid JWT signature", exception.getMessage(), "The error message should indicate the token is unsupported.");
+    }
 }

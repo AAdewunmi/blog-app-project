@@ -7,6 +7,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -123,6 +124,7 @@ public class JwtTokenProvider {
      * @throws BlogAPIException if the token is invalid, expired, unsupported,
      *         or contains null/empty claims
      */
+
     public boolean validateToken(String token){
         try{
             Jwts.parser()
@@ -130,12 +132,14 @@ public class JwtTokenProvider {
                     .build()
                     .parse(token);
             return true;
+        }catch (UnsupportedJwtException unsupportedJwtException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
         }catch (MalformedJwtException malformedJwtException){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
         }catch (ExpiredJwtException expiredJwtException){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Expired JWT token");
-        }catch (UnsupportedJwtException unsupportedJwtException){
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
+        }catch (SignatureException signatureException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Invalid JWT signature");
         }catch (IllegalArgumentException illegalArgumentException){
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Jwt claims string is null or empty");
         }
