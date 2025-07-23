@@ -212,4 +212,44 @@ public class JwtTokenProviderTest {
 
         assertEquals("Expired JWT token", exception.getMessage(), "The error message should indicate the token is expired.");
     }
+
+    /**
+     * Tests the `validateToken` method with a malformed JSON Web Token (JWT).
+     *
+     * This test verifies that the `validateToken` method properly detects and rejects
+     * a malformed JWT. It validates that an appropriate exception (`BlogAPIException`)
+     * is thrown with the correct error message when a malformed token is passed for validation.
+     *
+     * Steps performed in the test:
+     * - A `JwtTokenProvider` instance is created and configured with the necessary properties.
+     * - A malformed token string is provided as input.
+     * - The `validateToken` method is invoked with the malformed token, expecting it to trigger a `BlogAPIException`.
+     * - The exception message is validated to ensure it specifies that the token is invalid.
+     *
+     * Preconditions:
+     * - A properly initialized `JwtTokenProvider` instance with a valid JWT secret and expiration configuration.
+     *
+     * Postconditions:
+     * - The `validateToken` method throws a `BlogAPIException` with the message "Invalid JWT Token"
+     *   for the malformed token.
+     */
+    @Test
+    public void testValidateToken_malformedToken() {
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = jwtExpirationDate;
+
+        // Provide a malformed token
+        String malformedToken = "malformed.token.value";
+
+        // Validate the token and expect an exception
+        BlogAPIException exception = org.junit.jupiter.api.Assertions.assertThrows(
+                BlogAPIException.class,
+                () -> jwtTokenProvider.validateToken(malformedToken),
+                "Expected an exception for malformed token."
+        );
+
+        assertEquals("Invalid JWT Token", exception.getMessage(), "The error message should indicate the token is malformed.");
+    }
 }
