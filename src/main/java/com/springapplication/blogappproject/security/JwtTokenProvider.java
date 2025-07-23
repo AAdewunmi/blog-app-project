@@ -78,4 +78,17 @@ public class JwtTokenProvider {
         return token;
     }
 
+    /**
+     * Generates and returns a cryptographic key used for signing and verifying JWTs.
+     *
+     * This method decodes the JWT secret, which is encoded in Base64 format,
+     * and creates an HMAC-SHA key suitable for use with JSON Web Token operations.
+     * The key is critical for ensuring secure token creation and validation.
+     *
+     * @return a {@link Key} object representing the HMAC-SHA cryptographic key for JWT signing
+     */
+    private Key key(){
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
 }
