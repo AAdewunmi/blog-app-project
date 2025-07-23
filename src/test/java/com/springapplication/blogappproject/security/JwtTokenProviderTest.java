@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.security;
 
+import com.springapplication.blogappproject.exception.BlogAPIException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
@@ -161,5 +162,54 @@ public class JwtTokenProviderTest {
         boolean isValid = jwtTokenProvider.validateToken(token);
 
         assertEquals(true, isValid, "The valid token should be validated successfully.");
+    }
+
+    /**
+     * Tests the `validateToken` method with an expired JSON Web Token (JWT).
+     *
+     * This method verifies that the `validateToken` method correctly identifies and
+     * rejects an expired JWT. It uses a mocked `Authentication` object to generate
+     * a JWT with an expiration time set in the past, ensuring the token is expired
+     * at the time of validation. The test expects an appropriate exception to be
+     * thrown when trying to validate the expired token.
+     *
+     * Steps performed in the test:
+     * - A mocked `Authentication` object is set up with a predefined username.
+     * - A `JwtTokenProvider` instance is created and configured with the expiration
+     *   time set to a past timestamp to generate an expired token.
+     * - The expired token is passed to the `validateToken` method, which is expected
+     *   to throw a `BlogAPIException`.
+     * - The exception's message is validated to confirm it indicates the token expiration.
+     *
+     * Preconditions:
+     * - An `Authentication` object with a valid username is mocked.
+     * - A properly initialized `JwtTokenProvider` instance is used with a valid JWT secret.
+     *
+     * Postconditions:
+     * - The `validateToken` method throws a `BlogAPIException` with the message
+     *   "Expired JWT token" for the expired token.
+     */
+    @Test
+    public void testValidateToken_expiredToken() {
+        // Mock `Authentication`
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(authentication.getName()).thenReturn("testUser");
+
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = -1000; // Set expiration to past time
+
+        // Generate an expired token
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        // Validate the token and expect an exception
+        BlogAPIException exception = org.junit.jupiter.api.Assertions.assertThrows(
+                BlogAPIException.class,
+                () -> jwtTokenProvider.validateToken(token),
+                "Expected an exception for expired token."
+        );
+
+        assertEquals("Expired JWT token", exception.getMessage(), "The error message should indicate the token is expired.");
     }
 }
