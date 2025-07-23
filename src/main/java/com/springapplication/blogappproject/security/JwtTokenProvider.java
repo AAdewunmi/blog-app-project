@@ -111,6 +111,34 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-
+    /**
+     * Validates the provided JSON Web Token (JWT) for authenticity, expiration, and format.
+     *
+     * This method parses the token using the configured cryptographic key and checks
+     * its signature validity. If the token is valid, it returns true. Otherwise,
+     * it throws an exception specifying the reason for invalidity.
+     *
+     * @param token the JSON Web Token (JWT) string to validate
+     * @return true if the token is valid and properly formatted
+     * @throws BlogAPIException if the token is invalid, expired, unsupported,
+     *         or contains null/empty claims
+     */
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser()
+                    .verifyWith((SecretKey) key())
+                    .build()
+                    .parse(token);
+            return true;
+        }catch (MalformedJwtException malformedJwtException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
+        }catch (ExpiredJwtException expiredJwtException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Expired JWT token");
+        }catch (UnsupportedJwtException unsupportedJwtException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
+        }catch (IllegalArgumentException illegalArgumentException){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Jwt claims string is null or empty");
+        }
+    }
 
 }
