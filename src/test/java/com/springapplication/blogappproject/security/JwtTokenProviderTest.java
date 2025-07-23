@@ -91,4 +91,41 @@ public class JwtTokenProviderTest {
         assertNotNull(token, "Token should not be null");
         assertEquals("testUser", jwtTokenProvider.getUsername(token), "Token should contain the username");
     }
+
+    /**
+     * Tests the `getUsername` method with a valid JSON Web Token (JWT).
+     *
+     * This test ensures that the `getUsername` method correctly extracts the username
+     * embedded within a valid JWT. It performs the following steps:
+     *
+     * - Mocks an `Authentication` object and sets a username.
+     * - Uses the `generateToken` method to create a JWT with the mocked authentication details.
+     * - Calls the `getUsername` method on the generated token.
+     * - Verifies that the extracted username matches the expected value.
+     *
+     * Preconditions:
+     * - A valid `Authentication` object with a username is mocked.
+     * - A properly configured `JwtTokenProvider` instance is used.
+     *
+     * Postconditions:
+     * - The username extracted from the token matches the username used during token generation.
+     */
+    @Test
+    public void testGetUsername_validToken() {
+        // Mock `Authentication`
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(authentication.getName()).thenReturn("validUser");
+
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = jwtExpirationDate;
+
+        // Generate a token
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        // Verify `getUsername` extracts the correct username
+        String extractedUsername = jwtTokenProvider.getUsername(token);
+        assertEquals("validUser", extractedUsername, "The extracted username should match the one used to generate the token.");
+    }
 }
