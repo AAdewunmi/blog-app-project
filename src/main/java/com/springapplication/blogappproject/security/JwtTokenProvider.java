@@ -35,7 +35,7 @@ public class JwtTokenProvider {
      * the application to create and validate tokens securely.
      */
     @Value("${app.jwt-secret}")
-    private String jwtSecret;
+    protected String jwtSecret;
 
     /**
      * Represents the expiration duration in milliseconds for JSON Web Tokens (JWT).
@@ -47,7 +47,7 @@ public class JwtTokenProvider {
      * and it is used to set the expiration date during the JWT generation process.
      */
     @Value("${app-jwt-expiration-milliseconds}")
-    private long jwtExpirationDate;
+    protected long jwtExpirationDate;
 
 
     /**
