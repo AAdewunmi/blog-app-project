@@ -128,4 +128,38 @@ public class JwtTokenProviderTest {
         String extractedUsername = jwtTokenProvider.getUsername(token);
         assertEquals("validUser", extractedUsername, "The extracted username should match the one used to generate the token.");
     }
+
+    /**
+     * Tests the `validateToken` method with a valid JSON Web Token (JWT).
+     *
+     * This test ensures that the `validateToken` method returns `true` for a properly
+     * generated and valid token. It uses the `generateToken` method to create the token
+     * and then validates its correctness.
+     *
+     * Preconditions:
+     * - A valid `Authentication` object with a username is mocked.
+     * - A properly configured `JwtTokenProvider` instance is used.
+     *
+     * Postconditions:
+     * - The `validateToken` method returns `true` for the valid token.
+     */
+    @Test
+    public void testValidateToken_validToken() {
+        // Mock `Authentication`
+        Authentication authentication = Mockito.mock(Authentication.class);
+        when(authentication.getName()).thenReturn("validUser");
+
+        // Create an instance of `JwtTokenProvider`
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        jwtTokenProvider.jwtSecret = jwtSecret;
+        jwtTokenProvider.jwtExpirationDate = jwtExpirationDate;
+
+        // Generate a valid token
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        // Validate the token
+        boolean isValid = jwtTokenProvider.validateToken(token);
+
+        assertEquals(true, isValid, "The valid token should be validated successfully.");
+    }
 }
