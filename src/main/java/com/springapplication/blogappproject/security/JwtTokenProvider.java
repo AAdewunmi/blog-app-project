@@ -91,4 +91,26 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
+    /**
+     * Extracts and returns the username from the provided JSON Web Token (JWT).
+     *
+     * This method parses the JWT, validates its signature using the secret key,
+     * and retrieves the "subject" field from the token's payload, which represents the username.
+     *
+     * @param token the JSON Web Token (JWT) string from which the username is to be extracted
+     * @return the username contained within the "subject" field of the token's payload
+     * @throws io.jsonwebtoken.JwtException if the token is invalid, expired, or fails signature validation
+     */
+    public String getUsername(String token){
+
+        return Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+
+
 }
