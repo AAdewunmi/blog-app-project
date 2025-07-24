@@ -56,4 +56,23 @@ public class JwtAuthenticationFilterTest {
         verify(filterChain, times(1)).doFilter(request, response);
     }
 
+    @Test
+    void testShouldNotAuthenticateWithInvalidToken() throws ServletException, IOException {
+        JwtTokenProvider jwtTokenProvider = mock(JwtTokenProvider.class);
+        UserDetailsService userDetailsService = mock(UserDetailsService.class);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Bearer invalid_token");
+        when(jwtTokenProvider.validateToken("invalid_token")).thenReturn(false);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
 }
