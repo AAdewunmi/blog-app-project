@@ -1,6 +1,7 @@
-package com.springapplication.blogappproject.security;
+package com.springapplication.blogappproject.config;
 
 import com.springapplication.blogappproject.service.CustomUserDetailsService;
+import com.springapplication.blogappproject.security.JwtAuthenticationEntryPoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,12 +12,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-
 
 /**
  * Configuration class for security settings in a Spring Boot application.
@@ -39,7 +40,15 @@ public class SecurityConfig {
      * security configuration of the Spring Boot application.
      */
     private CustomUserDetailsService customUserDetailsService;
-
+    /**
+     * A private field of type {@link JwtAuthenticationEntryPoint} used to define
+     * the behavior for handling unauthorized access attempts in the application.
+     *
+     * This field is utilized within the security configuration to specify the custom entry point
+     * for managing authentication failures, typically by returning HTTP 401 Unauthorized
+     * responses with appropriate error messages.
+     */
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     /**
      * Constructor for the SecurityConfig class.
      *
@@ -48,7 +57,9 @@ public class SecurityConfig {
      *
      * @param customUserDetailsService an instance of {@link CustomUserDetailsService} used to load user details for authentication
      */
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -65,14 +76,17 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures the security filter chain for the application by specifying
-     * rules for how HTTP requests are authorized, disabling CSRF protection,
-     * enabling basic authentication, providing a custom authentication provider,
-     * and defining an entry point for unauthorized access handling.
+     * Configures and builds the security filter chain for the application.
+     * This method is responsible for defining the security policies, including
+     * disabling CSRF protection, configuring authorization rules, setting the
+     * HTTP Basic authentication mechanism, defining the custom authentication provider,
+     * handling authentication exceptions through a custom entry point, and enforcing stateless
+     * session management for API security.
      *
-     * @param http the {@link HttpSecurity} object used to configure the security settings for the application
-     * @return a {@link SecurityFilterChain} object containing the configured security filters
-     * @throws Exception if there is an error during the security configuration
+     * @param http the {@link HttpSecurity} object used to configure security settings
+     *             for specific HTTP requests and resources
+     * @return the built {@link SecurityFilterChain} configured with the application's security policies
+     * @throws Exception if an error occurs while setting up the security configuration
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -85,7 +99,11 @@ public class SecurityConfig {
             .httpBasic(Customizer.withDefaults())
             .authenticationProvider(authenticationProvider())  // Add this line
             .exceptionHandling(exception ->
-                exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                //exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                    exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
 
         return http.build();

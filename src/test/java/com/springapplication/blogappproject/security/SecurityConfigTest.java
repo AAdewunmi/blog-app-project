@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.security;
 
+import com.springapplication.blogappproject.config.SecurityConfig;
 import com.springapplication.blogappproject.service.CustomUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashSet;
