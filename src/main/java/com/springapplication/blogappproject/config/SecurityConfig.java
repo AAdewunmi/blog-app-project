@@ -65,6 +65,17 @@ public class SecurityConfig {
 
      private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Constructs an instance of the SecurityConfig class with the necessary
+     * dependencies required for configuring security settings in the application.
+     *
+     * @param customUserDetailsService an instance of {@link CustomUserDetailsService}
+     *        used for retrieving user-specific data during authentication processes
+     * @param jwtAuthenticationEntryPoint an implementation of {@link JwtAuthenticationEntryPoint}
+     *        used to handle unauthorized access attempts by returning appropriate HTTP responses
+     * @param jwtAuthenticationFilter an instance of {@link JwtAuthenticationFilter}
+     *        responsible for processing JWT tokens and handling security filters for requests
+     */
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
                             JwtAuthenticationFilter jwtAuthenticationFilter

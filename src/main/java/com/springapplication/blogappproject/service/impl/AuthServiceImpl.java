@@ -7,6 +7,7 @@ import com.springapplication.blogappproject.payload.LoginDto;
 import com.springapplication.blogappproject.payload.RegisterDto;
 import com.springapplication.blogappproject.repository.RoleRepository;
 import com.springapplication.blogappproject.repository.UserRepository;
+import com.springapplication.blogappproject.security.JwtTokenProvider;
 import com.springapplication.blogappproject.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,49 +29,64 @@ import java.util.Set;
 public class AuthServiceImpl implements AuthService {
 
     /**
-     * Manages user authentication within the system.
-     * This variable is used to authenticate user credentials
-     * and establish security contexts for further operations.
+     * Instance of AuthenticationManager used for handling user authentication
+     * in the application. It is responsible for validating the provided
+     * credentials (username and password) and managing authentication
+     * within the security context.
      */
     private AuthenticationManager authenticationManager;
     /**
-     * Repository interface used for managing User entities in the application.
-     * Provides methods to perform CRUD operations on users, as well as
-     * custom queries for retrieving, validating, and checking the existence
-     * of users by specific criteria such as username or email.
+     * Repository used to manage User entities.
+     * It provides methods for performing CRUD operations, checking the existence
+     * of usernames and emails, and any custom query methods defined for user management.
      */
     private UserRepository userRepository;
     /**
-     * Repository used to manage Role entities.
-     * It provides methods to perform CRUD operations and retrieve
-     * specific roles based on custom query methods like finding roles
-     * by their names or checking their existence.
+     * Repository used for managing Role entities.
+     * Provides methods to perform CRUD operations, find roles by name,
+     * and check the existence of roles in the database.
+     * Used in the AuthServiceImpl for role assignment and validation
+     * during user registration.
      */
     private RoleRepository roleRepository;
     /**
-     * Encodes passwords using a specified password encoding algorithm.
-     * This variable provides functionality for securely hashing and
-     * validating password data to ensure user authentication processes
-     * adhere to security best practices.
+     * Provides functionality for generating and validating JSON Web Tokens (JWTs).
+     * This component is used within authentication and authorization processes to issue
+     * tokens for authenticated users and verify their validity for secured operations.
+     */
+
+    private JwtTokenProvider jwtTokenProvider;
+    /**
+     * An instance of the PasswordEncoder used for secure encoding
+     * of user passwords. The encoded passwords are stored in a
+     * non-readable format for security purposes. This component
+     * is utilized during user registration and password verification
+     * processes to ensure the integrity and confidentiality of
+     * sensitive user information.
      */
     private PasswordEncoder passwordEncoder;
     /**
-     * Constructs an instance of AuthServiceImpl with dependencies for handling
-     * authentication, user management, role management, and password encoding.
+     * Constructs an AuthServiceImpl instance using the provided dependencies.
+     * These dependencies are used for user authentication, user and role management,
+     * password encoding, and JWT token generation.
      *
-     * @param authenticationManager the AuthenticationManager responsible for
-     *                              authenticating user credentials.
-     * @param userRepository         the UserRepository for managing user entity
-     *                               interactions such as retrieval and storage.
-     * @param roleRepository         the RoleRepository for managing and retrieving
-     *                               role-related data.
-     * @param passwordEncoder        the PasswordEncoder for encoding and validating
-     *                               user passwords securely.
+     * @param authenticationManager the AuthenticationManager instance used
+     *                              for user authentication and security context management.
+     * @param userRepository the UserRepository instance used for performing
+     *                       operations on User entities.
+     * @param roleRepository the RoleRepository instance used for performing
+     *                       operations on Role entities.
+     * @param passwordEncoder the PasswordEncoder instance used for encoding
+     *                        user passwords securely.
+     * @param jwtTokenProvider the JwtTokenProvider instance used for generating
+     *                         and validating JSON Web Tokens (JWTs).
      */
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -97,7 +113,8 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User Logged-In Successfully!";
+        String token = jwtTokenProvider.generateToken(authentication);
+        return token;
     }
 
     /**
