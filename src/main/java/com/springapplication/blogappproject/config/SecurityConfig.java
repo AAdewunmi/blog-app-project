@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.config;
 
+import com.springapplication.blogappproject.security.JwtAuthenticationFilter;
 import com.springapplication.blogappproject.service.CustomUserDetailsService;
 import com.springapplication.blogappproject.security.JwtAuthenticationEntryPoint;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Configuration class for security settings in a Spring Boot application.
@@ -50,17 +52,26 @@ public class SecurityConfig {
      */
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     /**
-     * Constructor for the SecurityConfig class.
+     * A private instance of the {@link JwtAuthenticationFilter} class used in the security configuration.
      *
-     * Initializes the security configuration with a custom implementation of
-     * the {@link CustomUserDetailsService} for user authentication and authorization.
+     * This variable represents the primary filter responsible for processing and validating JSON Web Tokens (JWTs)
+     * in incoming HTTP requests. It plays a critical role in securing the application's endpoints by performing
+     * JWT-based authentication, extracting user details, and populating the security context with authenticated
+     * user information.
      *
-     * @param customUserDetailsService an instance of {@link CustomUserDetailsService} used to load user details for authentication
+     * The filter works in conjunction with other security components to provide robust protection for RESTful APIs,
+     * ensuring that only authenticated and authorized requests can access secured resources.
      */
+
+     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                            JwtAuthenticationFilter jwtAuthenticationFilter
+    ) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.customUserDetailsService = customUserDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     /**
@@ -105,7 +116,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
-
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
