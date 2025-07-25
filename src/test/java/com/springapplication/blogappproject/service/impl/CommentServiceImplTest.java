@@ -8,6 +8,7 @@ import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.repository.CommentRepository;
 import com.springapplication.blogappproject.repository.PostRepository;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -29,7 +30,6 @@ public class CommentServiceImplTest {
     /**
      * The service being tested.
      */
-    @Autowired
     private CommentServiceImpl commentService;
     /**
      * Mocked repository for managing Comment entities.
@@ -45,6 +45,16 @@ public class CommentServiceImplTest {
      * Tests the successful creation of a comment.
      * Verifies that the comment is saved and associated with the correct post.
      */
+    @MockitoBean
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public CommentServiceImplTest(CommentRepository commentRepository,
+                                  PostRepository postRepository,
+                                  ModelMapper modelMapper) {
+        this.commentService = new CommentServiceImpl(commentRepository, postRepository, modelMapper);
+    }
+
     @Test
     void testCreateCommentSuccess() {
         // Arrange

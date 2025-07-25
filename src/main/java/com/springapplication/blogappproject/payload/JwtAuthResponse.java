@@ -29,4 +29,8 @@ public class JwtAuthResponse {
      * to indicate the type of token being passed.
      */
     private String tokenType = "Bearer";
+
+    public JwtAuthResponse(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

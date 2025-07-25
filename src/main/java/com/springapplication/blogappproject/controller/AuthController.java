@@ -1,9 +1,9 @@
 package com.springapplication.blogappproject.controller;
 
+import com.springapplication.blogappproject.payload.JwtAuthResponse;
 import com.springapplication.blogappproject.payload.LoginDto;
 import com.springapplication.blogappproject.payload.RegisterDto;
 import com.springapplication.blogappproject.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,8 +44,10 @@ public class AuthController {
      * @return a ResponseEntity containing the JWT token as a string upon successful authentication
      */
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        String response = authService.login(loginDto);
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
+        String token = authService.login(loginDto);
+        JwtAuthResponse response = new JwtAuthResponse(token);
+        response.setAccessToken(token);
         return ResponseEntity.ok(response);
     }
 

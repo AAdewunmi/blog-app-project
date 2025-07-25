@@ -6,7 +6,6 @@ import com.springapplication.blogappproject.security.JwtAuthenticationEntryPoint
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -18,8 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Configuration class for security settings in a Spring Boot application.
@@ -30,58 +29,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    /**
-     * A private instance of {@link CustomUserDetailsService} used for handling user authentication
-     * and authorization processes in the security configuration.
-     *
-     * This service is responsible for retrieving user details from the data source, such as the database,
-     * to perform authentication and grant appropriate access based on user roles and permissions.
-     *
-     * It is utilized in configuring authentication providers and other security components within the
-     * security configuration of the Spring Boot application.
-     */
-    private CustomUserDetailsService customUserDetailsService;
-    /**
-     * A private field of type {@link JwtAuthenticationEntryPoint} used to define
-     * the behavior for handling unauthorized access attempts in the application.
-     *
-     * This field is utilized within the security configuration to specify the custom entry point
-     * for managing authentication failures, typically by returning HTTP 401 Unauthorized
-     * responses with appropriate error messages.
-     */
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    /**
-     * A private instance of the {@link JwtAuthenticationFilter} class used in the security configuration.
-     *
-     * This variable represents the primary filter responsible for processing and validating JSON Web Tokens (JWTs)
-     * in incoming HTTP requests. It plays a critical role in securing the application's endpoints by performing
-     * JWT-based authentication, extracting user details, and populating the security context with authenticated
-     * user information.
-     *
-     * The filter works in conjunction with other security components to provide robust protection for RESTful APIs,
-     * ensuring that only authenticated and authorized requests can access secured resources.
-     */
-
-     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    /**
-     * Constructs an instance of the SecurityConfig class with the necessary
-     * dependencies required for configuring security settings in the application.
-     *
-     * @param customUserDetailsService an instance of {@link CustomUserDetailsService}
-     *        used for retrieving user-specific data during authentication processes
-     * @param jwtAuthenticationEntryPoint an implementation of {@link JwtAuthenticationEntryPoint}
-     *        used to handle unauthorized access attempts by returning appropriate HTTP responses
-     * @param jwtAuthenticationFilter an instance of {@link JwtAuthenticationFilter}
-     *        responsible for processing JWT tokens and handling security filters for requests
-     */
+    @Autowired
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                            JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+                        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                        JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.customUserDetailsService = customUserDetailsService;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 

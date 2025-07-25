@@ -1,12 +1,17 @@
 package com.springapplication.blogappproject;
 
 import com.springapplication.blogappproject.controller.PostController;
+import com.springapplication.blogappproject.security.JwtAuthenticationEntryPoint;
+import com.springapplication.blogappproject.security.JwtAuthenticationFilter;
+import com.springapplication.blogappproject.service.CustomUserDetailsService;
 import com.springapplication.blogappproject.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +35,8 @@ class BlogAppProjectApplicationTests {
 
     @Autowired
     private PostController postController;
+
+
     /*
      * Note: The PostService and PostController are autowired to ensure that
      * they are correctly initialized by the Spring context.
