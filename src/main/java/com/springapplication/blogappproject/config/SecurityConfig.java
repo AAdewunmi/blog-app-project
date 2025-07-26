@@ -47,7 +47,7 @@ public class SecurityConfig {
      * The implementation used is {@link BCryptPasswordEncoder}, which provides a secure way to encode passwords
      * by employing the bcrypt hashing algorithm.
      *
-     * @return a {@link PasswordEncoder} instance that utilizes bcrypt for password encoding
+     * @return a {@link PasswordEncoder} instance that uses bcrypt for password encoding
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
