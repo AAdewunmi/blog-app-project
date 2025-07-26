@@ -60,4 +60,12 @@ public class Post {
      */
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Comment> comments = new HashSet<>();
+
+    /**
+     * Category associated with the post.
+     * This field establishes a many-to-one relationship with the Category entity.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 }
