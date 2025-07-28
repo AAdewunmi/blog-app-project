@@ -9,17 +9,54 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the {@link CategoryService} interface that provides
+ * business logic for managing categories in the application.
+ * This class interacts with the data persistence layer through the {@link CategoryRepository}
+ * and uses {@link ModelMapper} to map between entity and DTO objects.
+ * It is annotated with {@code @Service}, making it eligible for Spring's component scanning
+ * to be automatically detected and registered as a spring bean.
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+    /**
+     * Repository interface for performing database operations on Category entities.
+     * Provides CRUD functionality and interacts with the persistence layer to manage categories.
+     */
     private CategoryRepository categoryRepository;
+    /**
+     * Instance of {@link ModelMapper} utilized for mapping objects between
+     * DTOs (Data Transfer Objects) and entity classes. This field facilitates
+     * the conversion of objects, reducing boilerplate code and ensuring a
+     * clear separation between different layers of the application. It improves
+     * maintainability and readability in operations that require object transformation,
+     * such as mapping data from a database entity to an API response DTO.
+     */
     private ModelMapper modelMapper;
 
+    /**
+     * Constructs a new instance of the {@code CategoryServiceImpl}.
+     * This constructor initializes the service with the necessary dependencies for
+     * interacting with the persistence layer and performing object mappings.
+     *
+     * @param categoryRepository the repository used to perform database operations for Category entities
+     * @param modelMapper the mapper used to map between Category entities and DTOs
+     */
     public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Adds a new category to the system.
+     * The method accepts a CategoryDto object, converts it into a Category entity,
+     * persists it into the database, and returns the saved entity as a CategoryDto.
+     *
+     * @param categoryDto the data transfer object containing the category details
+     *                    to be added. It contains attributes like name and description.
+     * @return the persisted category details mapped to a CategoryDto object
+     */
     @Override
     public CategoryDto addCategory(CategoryDto categoryDto) {
         Category category = modelMapper.map(categoryDto, Category.class);
