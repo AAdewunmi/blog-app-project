@@ -3,6 +3,10 @@ package com.springapplication.blogappproject.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * This class represents a custom exception for the Blog API, extending {@code RuntimeException}.
+ * It is designed to handle API-specific errors with an associated HTTP status code and message.
+ */
 public class BlogAPIException extends RuntimeException{
 
     @Getter

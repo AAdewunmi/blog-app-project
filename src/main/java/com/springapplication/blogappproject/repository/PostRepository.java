@@ -14,15 +14,13 @@ import java.util.Optional;
  */
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-
-    // Custom query methods can be defined here if needed
-    // For example, to find posts by title:
-    // List<Post> findByTitle(String title);
-    // Or to find posts containing a specific keyword in the content:
-    // List<Post> findByContentContaining(String keyword);
-    //@Query("SELECT p FROM Post p LEFT JOIN FETCH p.comments")
-    //List<Post> findAllPostsWithComments();
-
+    /**
+     * Retrieves a Post entity along with its associated comments based on the provided ID.
+     * This method uses a JPQL query with a LEFT JOIN FETCH to eagerly load the comments.
+     *
+     * @param id The ID of the Post entity to retrieve.
+     * @return An Optional containing the Post entity with its comments if found, or an empty Optional otherwise.
+     */
     @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.comments c WHERE p.id = :id")
     Optional<Post> findByIdWithComments(@Param("id") Long id);
 }

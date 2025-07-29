@@ -20,17 +20,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-    /* PostController is a REST controller that manages blog posts.
-     * It provides endpoints to create a post, retrieve all posts, and get a post by its ID.
-     * The controller uses PostService to handle business logic.
+    /**
+     * The PostService instance used by the PostController for business logic related to blog posts.
+     * This service layer is responsible for handling core operations such as creating, retrieving,
+     * updating, and deleting posts, as well as other related functionalities.
      */
     private PostService postService;
+    /**
+     * The PostRepository instance used for interacting with the database
+     * to perform CRUD operations related to blog posts.
+     */
     private PostRepository postRepository;
 
+    /**
+     * Constructor for PostController.
+     *
+     * @param postService the service layer object used to manage blog posts.
+     */
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
+    /**
+     * Retrieves a paginated list of blog posts based on the provided parameters.
+     *
+     * @param pageNo the page number to retrieve, defaults to the value defined in {@link AppConstants#DEFAULT_PAGE_NUMBER}.
+     * @param pageSize the number of posts per page, defaults to the value defined in {@link AppConstants#DEFAULT_PAGE_SIZE}.
+     * @param sortBy the field by which to sort the posts, defaults to the value defined in {@link AppConstants#DEFAULT_SORT_BY}.
+     * @param sortDir the sort direction (ascending or descending), defaults to the value defined in {@link AppConstants#DEFAULT_SORT_DIR}.
+     * @return a {@link PostResponse} object containing the list of posts and pagination details.
+     */
     // Paginated version
     @GetMapping("/paginated")
     public PostResponse getAllPostsPaginated(
@@ -41,12 +60,22 @@ public class PostController {
         return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
+    /**
+     * Retrieves a list of all blog posts.
+     *
+     * @return ResponseEntity containing a list of PostDto objects representing all blog posts.
+     */
     // Non-paginated version
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts() {
         return ResponseEntity.ok(postService.getAllPosts());
     }
-    /*
+    /**
+     * Creates a new blog post.
+     *
+     * @param postDto the data transfer object containing the details of the new post.
+     * @return ResponseEntity containing the created PostDto object and the HTTP status code.
+     */ /*
      * Creates a new blog post.
      * @param postDto the data transfer object containing post details.
      * @return ResponseEntity containing the created PostDto and HTTP status code.
@@ -57,7 +86,12 @@ public class PostController {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
-    /*
+    /**
+     * Retrieves a blog post by its ID.
+     *
+     * @param id the ID of the post to retrieve.
+     * @return ResponseEntity containing the PostDto if found, or an error response if the post is not found.
+     */ /*
      * Retrieves a blog post by its ID.
      * @param id the ID of the post to retrieve.
      * @return ResponseEntity containing the PostDto if found, or an error if not found.
@@ -74,7 +108,13 @@ public class PostController {
             throw e;
         }
     }
-    /*
+    /**
+     * Updates a blog post by its ID.
+     *
+     * @param postDto the data transfer object containing updated post details
+     * @param id the ID of the post to update
+     * @return ResponseEntity containing the updated PostDto and HTTP status code
+     */ /*
      * Updates a blog post by its ID.
      * @param postDto the data transfer object containing updated post details.
      * @param id the ID of the post to update.
@@ -97,7 +137,12 @@ public class PostController {
         }
     }
 
-    /*
+    /**
+     * Deletes a blog post by its ID.
+     *
+     * @param id the ID of the post to delete
+     * @return ResponseEntity with HTTP status code indicating the result of the deletion
+     */ /*
      * Deletes a blog post by its ID.
      * @param id the ID of the post to delete.
      * @return ResponseEntity with HTTP status code indicating the result of the deletion.
@@ -115,6 +160,13 @@ public class PostController {
             throw e;
         }
     }
+/**
+ * Tests the connection to the database by checking if a post with the specified ID exists.
+ *
+ * @param id the ID of the post to check in the database
+ * @return a ResponseEntity containing a string message indicating whether the post exists,
+ *         or an error message in case of an exception
+ */
 @GetMapping("/test/{id}")
 public ResponseEntity<String> testDatabaseConnection(@PathVariable(name = "id") long id) {
     try {

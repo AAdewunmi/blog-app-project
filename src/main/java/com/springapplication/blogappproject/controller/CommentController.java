@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * CommentController is a REST controller that handles HTTP requests related to comments.
- * It provides endpoints for creating and retrieving comments associated with blog posts.
+ * Controller class for managing blog post comments in the application.
+ * Provides REST API endpoints for creating, retrieving, updating, and deleting comments
+ * associated with specific blog posts.
  */
 
 
@@ -19,8 +20,17 @@ import java.util.List;
 @RequestMapping("/api")
 public class CommentController {
 
+    /**
+     * Service instance responsible for managing comment-related operations in the application.
+     * Provides functionality to create, retrieve, update, and delete comments associated with blog posts.
+     */
     private final CommentService commentService;
 
+    /**
+     * Constructs a new instance of {@code CommentController}.
+     *
+     * @param commentService the service responsible for managing comment operations
+     */
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
