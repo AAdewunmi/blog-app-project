@@ -52,4 +52,16 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value(savedCategory.getName()))
                 .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
     }
+
+    @Test
+    public void addCategory_ShouldReturnUnauthorized_WhenUserIsNotAuthenticated() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setName("Technology");
+        categoryDto.setDescription("All about technology");
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryDto)))
+                .andExpect(status().isUnauthorized());
+    }
 }
