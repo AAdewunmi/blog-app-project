@@ -33,7 +33,7 @@ public class CategoryServiceImplTest {
      */
 
     @Test
-    void testAddCategory_ValidCategoryDto_ReturnsSavedCategoryDto() {
+    void testAddCategory_Valid_CategoryDto_Returns_Saved_CategoryDto() {
         // Arrange
         CategoryDto inputDto = new CategoryDto();
         inputDto.setId(1L);
