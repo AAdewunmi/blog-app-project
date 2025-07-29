@@ -20,5 +20,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
 
+    @Autowired
+    private MockMvc mockMvc;
 
+    @MockBean
+    private CategoryService categoryService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void addCategory_ShouldReturnCreatedCategory_WhenValidInput() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setName("Technology");
+        categoryDto.setDescription("All about technology");
+
+        CategoryDto savedCategory = new CategoryDto();
+        savedCategory.setId(1L);
+        savedCategory.setName("Technology");
+        savedCategory.setDescription("All about technology");
+
+        Mockito.when(categoryService.addCategory(Mockito.any(CategoryDto.class))).thenReturn(savedCategory);
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryDto)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(savedCategory.getId()))
+                .andExpect(jsonPath("$.name").value(savedCategory.getName()))
+                .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
+    }
 }
