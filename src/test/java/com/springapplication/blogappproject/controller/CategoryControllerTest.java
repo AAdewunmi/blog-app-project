@@ -105,4 +105,45 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isForbidden());
     }
+    /**
+     * Tests the addCategory endpoint for an invalid category input.
+     * Ensures that when an invalid category DTO is provided, the endpoint
+     * returns a 400 (Bad Request) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void testAddCategory_ReturnsBadRequest_WhenCategoryDtoIsInvalid() throws Exception {
+        CategoryDto invalidCategoryDto = new CategoryDto(); // Missing required fields
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidCategoryDto)))
+                .andExpect(status().isBadRequest());
+    }
+    /**
+     * Tests the getCategory endpoint for a valid category ID.
+     * Ensures that when a valid category ID is provided, the endpoint
+     * returns the category details with a 200 (OK) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void testGetCategory_ReturnsCategory_WhenValidIdProvided() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(1L);
+        categoryDto.setName("Technology");
+        categoryDto.setDescription("All about technology");
+
+        Mockito.when(categoryService.getCategory(1L)).thenReturn(categoryDto);
+
+        mockMvc.perform(get("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(categoryDto.getId()))
+                .andExpect(jsonPath("$.name").value(categoryDto.getName()))
+                .andExpect(jsonPath("$.description").value(categoryDto.getDescription()));
+    }
 }
