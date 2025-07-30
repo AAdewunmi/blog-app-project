@@ -9,6 +9,9 @@ import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -140,4 +143,66 @@ public class CategoryServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.addCategory(null));
     }
 
+    /**
+     * Tests the functionality of retrieving a category by its ID using the getCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates the following workflow:
+     * 1. Retrieves a Category entity from the repository based on the provided ID.
+     * 2. Maps the retrieved Category entity to a CategoryDto.
+     * 3. Ensures the returned CategoryDto contains the expected data.
+     *
+     * The test asserts that the ID, name, and description of the returned CategoryDto
+     * match those of the retrieved Category entity.
+     *
+     * Mocks:
+     * - Retrieves a Category entity from the categoryRepository based on the provided ID.
+     * - Maps the retrieved Category entity to a CategoryDto using modelMapper.
+     *
+     * Verifications:
+     * - Confirms that the modelMapper is used to map the retrieved entity to a DTO.
+     */
+    @Test
+    void testGetCategory_ValidId_ReturnsCategoryDto() {
+        // Arrange
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Technology");
+        category.setDescription("All about tech");
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(modelMapper.map(category, CategoryDto.class)).thenReturn(new CategoryDto(1L, "Technology", "All about tech"));
+
+        // Act
+        CategoryDto result = categoryServiceImpl.getCategory(1L);
+
+        // Assert
+        assertEquals(1L, result.getId());
+        assertEquals("Technology", result.getName());
+        assertEquals("All about tech", result.getDescription());
+    }
+    /**
+     * Tests the functionality of retrieving a category by an invalid ID using the getCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that a ResourceNotFoundException is thrown when an invalid ID
+     * (not present in the repository) is passed to the getCategory method.
+     *
+     * The test asserts that the exception is thrown as expected, ensuring that
+     * the service correctly handles cases where the requested category does not exist.
+     *
+     * Mocks:
+     * - Simulates the behavior of the categoryRepository to return an empty Optional for an invalid ID.
+     *
+     * Verifications:
+     * - Confirms that a ResourceNotFoundException is thrown when an invalid ID is requested.
+     */
+    @Test
+    void testGetCategory_InvalidId_ThrowsResourceNotFoundException() {
+        // Arrange
+        when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.getCategory(99L));
+    }
 }
