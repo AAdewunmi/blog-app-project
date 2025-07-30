@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -117,4 +118,26 @@ public class CategoryServiceImplTest {
         verify(categoryRepository).save(categoryEntity);
         verify(modelMapper).map(savedCategoryEntity, CategoryDto.class);
     }
+    /**
+     * Tests the functionality of adding a null category using the addCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that an IllegalArgumentException is thrown when a null
+     * CategoryDto is passed to the addCategory method.
+     *
+     * The test asserts that the exception is thrown as expected, ensuring that
+     * the service correctly handles null inputs.
+     *
+     * Mocks:
+     * - None, as this test focuses on exception handling for null input.
+     *
+     * Verifications:
+     * - Confirms that an IllegalArgumentException is thrown when null is passed.
+     */
+    @Test
+    void testAddCategory_NullCategoryDto_ThrowsException() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.addCategory(null));
+    }
+
 }

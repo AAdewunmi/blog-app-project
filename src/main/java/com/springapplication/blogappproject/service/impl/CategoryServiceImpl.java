@@ -64,24 +64,48 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory = categoryRepository.save(category);
         return modelMapper.map(savedCategory, CategoryDto.class);
     }
-
+    /**
+     * Retrieves a category by its ID.
+     * If the category is not found, a {@link ResourceNotFoundException} is thrown.
+     *
+     * @param categoryId the ID of the category to retrieve
+     * @return the category details mapped to a {@link CategoryDto} object
+     * @throws ResourceNotFoundException if no category is found with the given ID
+     */
     @Override
     public CategoryDto getCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category ", "id ", categoryId));
         return modelMapper.map(category, CategoryDto.class);
     }
-
+    /**
+     * Retrieves all categories from the system.
+     * Currently, this method returns an empty list.
+     *
+     * @return a list of {@link CategoryDto} objects representing all categories
+     */
     @Override
     public List<CategoryDto> getAllCategories() {
         return List.of();
     }
-
+    /**
+     * Updates an existing category with new details.
+     * This method is not yet implemented and currently returns null.
+     *
+     * @param categoryDto the data transfer object containing the updated category details
+     * @param categoryId the ID of the category to update
+     * @return the updated category details mapped to a {@link CategoryDto} object
+     */
     @Override
     public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
         return null;
     }
-
+    /**
+     * Deletes a category by its ID.
+     * This method is not yet implemented and currently performs no action.
+     *
+     * @param categoryId the ID of the category to delete
+     */
     @Override
     public void deleteCategory(Long categoryId) {
 
