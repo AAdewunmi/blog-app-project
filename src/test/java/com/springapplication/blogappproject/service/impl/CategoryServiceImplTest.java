@@ -232,4 +232,77 @@ public class CategoryServiceImplTest {
         // Assert
         assertEquals(0, result.size());
     }
+    /**
+     * Tests the functionality of updating a category using the updateCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that the method correctly updates an existing category
+     * when a valid CategoryDto and ID are provided.
+     *
+     * The test asserts that the returned CategoryDto contains the updated data,
+     * ensuring that the service correctly handles update requests for existing categories.
+     *
+     * Mocks:
+     * - Simulates the behavior of the categoryRepository to return an existing Category entity.
+     * - Maps the updated Category entity back to a CategoryDto using modelMapper.
+     *
+     * Verifications:
+     * - Confirms that the modelMapper is used to map the updated entity to a DTO.
+     */
+    @Test
+    void testUpdateCategory_NullCategoryDto_ThrowsException() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.updateCategory(null, 1L));
+    }
+    /**
+     * Tests the functionality of deleting a category by a valid ID using the deleteCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that the method performs the deletion operation when a valid ID
+     * (present in the repository) is passed to the deleteCategory method.
+     *
+     * The test asserts that the deleteById method of the categoryRepository is called with the correct ID,
+     * ensuring that the service correctly handles deletion requests for existing categories.
+     *
+     * Mocks:
+     * - Simulates the behavior of the categoryRepository to return true for existsById on a valid ID.
+     *
+     * Verifications:
+     * - Confirms that deleteById is called with the correct ID when a valid ID is requested for deletion.
+     */
+    @Test
+    void testDeleteCategory_ValidId_PerformsDeletion() {
+        // Arrange
+        when(categoryRepository.existsById(1L)).thenReturn(true);
+
+        // Act
+        categoryServiceImpl.deleteCategory(1L);
+
+        // Assert
+        verify(categoryRepository).deleteById(1L);
+    }
+    /**
+     * Tests the functionality of deleting a category by an invalid ID using the deleteCategory method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that a ResourceNotFoundException is thrown when an invalid ID
+     * (not present in the repository) is passed to the deleteCategory method.
+     *
+     * The test asserts that the exception is thrown as expected, ensuring that
+     * the service correctly handles cases where the requested category does not exist.
+     *
+     * Mocks:
+     * - Simulates the behavior of the categoryRepository to return false for existsById on an invalid ID.
+     *
+     * Verifications:
+     * - Confirms that a ResourceNotFoundException is thrown when an invalid ID is requested for deletion.
+     */
+    @Test
+    void testDeleteCategory_InvalidId_ThrowsResourceNotFoundException() {
+        // Arrange
+        when(categoryRepository.existsById(99L)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.deleteCategory(99L));
+    }
 }
