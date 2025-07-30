@@ -24,6 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import(TestSecurityConfig.class) // Ensure this config restricts /api/categories to ADMIN
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+/** * Test class for the CategoryController.
+ * This class contains tests for the addCategory endpoint, ensuring that it behaves correctly
+ * under different user roles and authentication states.
+ */
 public class CategoryControllerTest {
 
     @Autowired
@@ -34,7 +38,13 @@ public class CategoryControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
+    /**
+     * Tests the addCategory endpoint for a valid input.
+     * Ensures that when a valid category is provided by an admin user, the endpoint
+     * returns the created category with a 201 (Created) status.
+     *
+     * @throws Exception if the request processing fails
+     */
     @Test
     @WithMockUser(roles = "ADMIN")
     public void addCategory_ShouldReturnCreatedCategory_WhenValidInput() throws Exception {
@@ -58,7 +68,13 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value(savedCategory.getName()))
                 .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
     }
-
+    /**
+     * Tests the addCategory endpoint for an unauthenticated user.
+     * Ensures that when a user is not authenticated, the endpoint
+     * returns a 401 (Unauthorized) status.
+     *
+     * @throws Exception if the request processing fails
+     */
     @Test
     public void addCategory_ShouldReturnUnauthorized_WhenUserIsNotAuthenticated() throws Exception {
         CategoryDto categoryDto = new CategoryDto();
@@ -70,7 +86,13 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isUnauthorized());
     }
-
+    /**
+     * Tests the addCategory endpoint for a user without admin privileges.
+     * Ensures that when a user with insufficient permissions attempts to add a category,
+     * the endpoint returns a 403 (Forbidden) status.
+     *
+     * @throws Exception if the request processing fails
+     */
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
     public void addCategory_ShouldReturnForbidden_WhenUserHasNoAdminRole() throws Exception {

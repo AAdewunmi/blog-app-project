@@ -5,10 +5,7 @@ import com.springapplication.blogappproject.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -46,8 +43,23 @@ public class CategoryController {
      */
     @PostMapping
     @PreAuthorize("hasRole('USER') and hasRole('ADMIN')")
-    public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto){
+    public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
+    }
+    /**
+     * Retrieves a category by its ID. This method returns the details of the
+     * specified category if it exists. If the category is not found, it will
+     * return a 404 Not Found status.
+     *
+     * @param categoryId the ID of the category to retrieve
+     * @return a ResponseEntity containing the {@link CategoryDto} object with the category details,
+     *         or a 404 Not Found status if the category does not exist
+     */
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') and hasRole('ADMIN')")
+    public ResponseEntity<CategoryDto> getCategory(@PathVariable("id") Long categoryId) {
+        CategoryDto categoryDto = categoryService.getCategory(categoryId);
+        return ResponseEntity.ok(categoryDto);
     }
 }
