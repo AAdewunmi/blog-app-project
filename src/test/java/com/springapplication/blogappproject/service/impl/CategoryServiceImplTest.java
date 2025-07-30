@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
-
+import java.util.List;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -204,5 +204,32 @@ public class CategoryServiceImplTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.getCategory(99L));
+    }
+    /**
+     * Tests the functionality of retrieving all categories using the getAllCategories method
+     * in the CategoryServiceImpl service.
+     *
+     * This test validates that the method returns an empty list when there are no categories
+     * present in the repository.
+     *
+     * The test asserts that the returned list is empty, ensuring that the service correctly
+     * handles cases where no categories exist.
+     *
+     * Mocks:
+     * - Simulates the behavior of the categoryRepository to return an empty list when findAll is called.
+     *
+     * Verifications:
+     * - Confirms that the returned list from getAllCategories is empty.
+     */
+    @Test
+    void testGetAllCategories_NoCategories_ReturnsEmptyList() {
+        // Arrange
+        when(categoryRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<CategoryDto> result = categoryServiceImpl.getAllCategories();
+
+        // Assert
+        assertEquals(0, result.size());
     }
 }
