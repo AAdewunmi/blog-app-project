@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestSecurityConfig.class) // Ensure this config restricts /api/categories to ADMIN
@@ -38,6 +38,7 @@ public class CategoryControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
     /**
      * Tests the addCategory endpoint for a valid input.
      * Ensures that when a valid category is provided by an admin user, the endpoint
@@ -68,6 +69,7 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value(savedCategory.getName()))
                 .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
     }
+
     /**
      * Tests the addCategory endpoint for an unauthenticated user.
      * Ensures that when a user is not authenticated, the endpoint
@@ -86,6 +88,7 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isUnauthorized());
     }
+
     /**
      * Tests the addCategory endpoint for a user without admin privileges.
      * Ensures that when a user with insufficient permissions attempts to add a category,
@@ -105,6 +108,7 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isForbidden());
     }
+
     /**
      * Tests the addCategory endpoint for an invalid category input.
      * Ensures that when an invalid category DTO is provided, the endpoint
@@ -122,6 +126,7 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(invalidCategoryDto)))
                 .andExpect(status().isBadRequest());
     }
+
     /**
      * Tests the getCategory endpoint for a valid category ID.
      * Ensures that when a valid category ID is provided, the endpoint
@@ -146,4 +151,48 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value(categoryDto.getName()))
                 .andExpect(jsonPath("$.description").value(categoryDto.getDescription()));
     }
+    /**
+     * Tests the getCategory endpoint for an invalid category ID.
+     * Ensures that when a non-existent category ID is provided, the endpoint
+     * returns a 404 (Not Found) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void testGetCategory_ReturnsNotFound_WhenInvalidIdProvided() throws Exception {
+        Mockito.when(categoryService.getCategory(99L)).thenThrow(new ResourceNotFoundException("Category", "id", 99L));
+
+        mockMvc.perform(get("/api/categories/99")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+    /**
+     * Tests the getCategory endpoint for an unauthenticated user.
+     * Ensures that when a user is not authenticated, the endpoint
+     * returns a 401 (Unauthorized) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    public void testGetCategory_ReturnsUnauthorized_WhenUserIsNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+    /**
+     * Tests the getCategory endpoint for a user without admin privileges.
+     * Ensures that when a user without the required role attempts to access a category,
+     * the endpoint returns a 403 (Forbidden) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void testGetCategory_ReturnsForbidden_WhenUserHasNoAdminRole() throws Exception {
+        mockMvc.perform(get("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
 }
