@@ -86,6 +86,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/categories") || path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response); // Skip JWT filter for these paths
+            return;
+        }
         String token = getTokenFromRequest(request);
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
             String username = jwtTokenProvider.getUsername(token);
