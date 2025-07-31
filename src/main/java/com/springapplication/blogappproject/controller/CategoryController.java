@@ -42,7 +42,7 @@ public class CategoryController {
      * @return a ResponseEntity containing the newly created {@link CategoryDto} object and an HTTP status of CREATED
      */
     @PostMapping
-    @PreAuthorize("hasRole('USER') and hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
@@ -57,7 +57,7 @@ public class CategoryController {
      *         or a 404 Not Found status if the category does not exist
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') and hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable("id") Long categoryId) {
         CategoryDto categoryDto = categoryService.getCategory(categoryId);
         return ResponseEntity.ok(categoryDto);
