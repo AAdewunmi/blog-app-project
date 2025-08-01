@@ -1,11 +1,12 @@
 package com.springapplication.blogappproject.controller;
-
 import com.springapplication.blogappproject.payload.CategoryDto;
 import com.springapplication.blogappproject.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -19,7 +20,7 @@ public class CategoryController {
      * this service must implement.
      */
     private CategoryService categoryService;
-
+    private CategoryDto categoryDto;
     /**
      * Constructs an instance of CategoryController with the provided CategoryService.
      * The CategoryService is used to handle business logic related to category
@@ -41,8 +42,9 @@ public class CategoryController {
      *                    such as name and description
      * @return a ResponseEntity containing the newly created {@link CategoryDto} object and an HTTP status of CREATED
      */
+
     @PostMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> addCategory(@RequestBody CategoryDto categoryDto) {
         CategoryDto savedCategory = categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
@@ -57,9 +59,19 @@ public class CategoryController {
      *         or a 404 Not Found status if the category does not exist
      */
     @GetMapping("/{id}")
-    //@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable("id") Long categoryId) {
         CategoryDto categoryDto = categoryService.getCategory(categoryId);
         return ResponseEntity.ok(categoryDto);
+    }
+
+    /**
+     * Retrieves all categories from the system. This method returns a list of
+     * all categories available in the application.
+     *
+     * @return a ResponseEntity containing a list of {@link CategoryDto} objects representing all categories
+     */
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 }
