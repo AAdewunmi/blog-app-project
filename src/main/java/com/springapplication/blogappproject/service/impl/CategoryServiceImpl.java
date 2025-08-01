@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link CategoryService} interface that provides
@@ -86,7 +87,9 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public List<CategoryDto> getAllCategories() {
-        return List.of();
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(category -> modelMapper.map(category, CategoryDto.class))
+                .collect(Collectors.toList());
     }
     /**
      * Updates an existing category with new details.
