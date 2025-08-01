@@ -305,4 +305,102 @@ public class CategoryServiceImplTest {
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.deleteCategory(99L));
     }
+
+    /**
+     * Validates that adding a category with an empty name throws an IllegalArgumentException.
+     * Ensures the service enforces non-empty category names.
+     */
+    @Test
+    void testAddCategory_EmptyName_ThrowsException() {
+        // Arrange
+        CategoryDto inputDto = new CategoryDto();
+        inputDto.setId(1L);
+        inputDto.setName("");
+        inputDto.setDescription("Description");
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.addCategory(inputDto));
+    }
+
+    /**
+     * Validates that retrieving a category with a null ID throws an IllegalArgumentException.
+     * Ensures the service enforces non-null IDs for retrieval.
+     */
+    @Test
+    void getCategory_NullId_ThrowsException() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.getCategory(null));
+    }
+
+    /**
+     * Validates that retrieving all categories returns a list containing all categories.
+     * Ensures the service correctly maps and returns multiple categories.
+     */
+    @Test
+    void getAllCategories_MultipleCategories_ReturnsList() {
+        // Arrange
+        Category category1 = new Category();
+        category1.setId(1L);
+        category1.setName("Tech");
+        category1.setDescription("Tech description");
+
+        Category category2 = new Category();
+        category2.setId(2L);
+        category2.setName("Health");
+        category2.setDescription("Health description");
+
+        when(categoryRepository.findAll()).thenReturn(List.of(category1, category2));
+
+        // Act
+        List<CategoryDto> result = categoryServiceImpl.getAllCategories();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals("Tech", result.get(0).getName());
+        assertEquals("Health", result.get(1).getName());
+    }
+
+    /**
+     * Validates that updating a category with valid data returns the updated CategoryDto.
+     * Ensures the service correctly updates and maps the category.
+     */
+    @Test
+    void updateCategory_ValidCategoryDto_ReturnsUpdatedCategoryDto() {
+        // Arrange
+        Category existingCategory = new Category();
+        existingCategory.setId(1L);
+        existingCategory.setName("Old Name");
+        existingCategory.setDescription("Old Description");
+
+        CategoryDto updatedDto = new CategoryDto();
+        updatedDto.setId(1L);
+        updatedDto.setName("New Name");
+        updatedDto.setDescription("New Description");
+
+        Category updatedCategory = new Category();
+        updatedCategory.setId(1L);
+        updatedCategory.setName("New Name");
+        updatedCategory.setDescription("New Description");
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
+        when(modelMapper.map(updatedCategory, CategoryDto.class)).thenReturn(updatedDto);
+
+        // Act
+        CategoryDto result = categoryServiceImpl.updateCategory(updatedDto, 1L);
+
+        // Assert
+        assertEquals("New Name", result.getName());
+        assertEquals("New Description", result.getDescription());
+    }
+
+    /**
+     * Validates that deleting a category with a null ID throws an IllegalArgumentException.
+     * Ensures the service enforces non-null IDs for deletion.
+     */
+    @Test
+    void deleteCategory_NullId_ThrowsException() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.deleteCategory(null));
+    }
 }
