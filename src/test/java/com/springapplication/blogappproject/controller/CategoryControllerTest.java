@@ -1,5 +1,5 @@
 package com.springapplication.blogappproject.controller;
-
+import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.blogappproject.config.TestSecurityConfig;
 import com.springapplication.blogappproject.payload.CategoryDto;
@@ -193,6 +193,68 @@ public class CategoryControllerTest {
         mockMvc.perform(get("/api/categories/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Ensures that sending a null CategoryDto to the addCategory endpoint
+     * returns a 400 Bad Request status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void addCategory_ReturnsBadRequest_WhenCategoryDtoIsNull() throws Exception {
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(null)))
+                .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Ensures that requesting a category with an invalid (non-numeric) ID
+     * returns a 400 Bad Request status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getCategory_ReturnsBadRequest_WhenIdIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/categories/invalid-id")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Ensures that when no categories exist, the getAllCategories endpoint
+     * returns an empty list with a 200 OK status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getAllCategories_ReturnsEmptyList_WhenNoCategoriesExist() throws Exception {
+        Mockito.when(categoryService.getAllCategories()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    /**
+     * Ensures that when categories exist, the getAllCategories endpoint
+     * returns a list of categories with a 200 OK status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getAllCategories_ReturnsListOfCategories_WhenCategoriesExist() throws Exception {
+        CategoryDto category1 = new CategoryDto(1L, "Tech", "Tech description");
+        CategoryDto category2 = new CategoryDto(2L, "Health", "Health description");
+
+        Mockito.when(categoryService.getAllCategories()).thenReturn(List.of(category1, category2));
+
+        mockMvc.perform(get("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Tech"))
+                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[1].name").value("Health"));
     }
 
 }
