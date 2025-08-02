@@ -403,4 +403,83 @@ public class CategoryServiceImplTest {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.deleteCategory(null));
     }
+
+    /**
+     * Tests that deleting a category with a valid ID calls the repository's deleteById method.
+     * Ensures the service performs the deletion operation for existing categories.
+     */
+    @Test
+    void deleteCategory_ValidId_DeletesCategorySuccessfully() {
+        when(categoryRepository.existsById(1L)).thenReturn(true);
+
+        categoryServiceImpl.deleteCategory(1L);
+
+        verify(categoryRepository).deleteById(1L);
+    }
+
+    /**
+     * Tests that deleting a category with an invalid ID throws a ResourceNotFoundException.
+     * Ensures the service handles deletion requests for non-existent categories correctly.
+     */
+    @Test
+    void deleteCategory_InvalidId_ThrowsResourceNotFoundException() {
+        when(categoryRepository.existsById(99L)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.deleteCategory(99L));
+    }
+
+    /**
+     * Tests that adding a category with a null name throws an IllegalArgumentException.
+     * Ensures the service enforces non-null names for new categories.
+     */
+    @Test
+    void addCategory_NullName_ThrowsIllegalArgumentException() {
+        CategoryDto inputDto = new CategoryDto();
+        inputDto.setId(1L);
+        inputDto.setName(null);
+        inputDto.setDescription("Description");
+
+        assertThrows(IllegalArgumentException.class, () -> categoryServiceImpl.addCategory(inputDto));
+    }
+
+    /**
+     * Tests that updating a category with an invalid ID throws a ResourceNotFoundException.
+     * Ensures the service handles update requests for non-existent categories correctly.
+     */
+    @Test
+    void updateCategory_InvalidId_ThrowsResourceNotFoundException() {
+        CategoryDto updatedDto = new CategoryDto();
+        updatedDto.setId(99L);
+        updatedDto.setName("Updated Name");
+        updatedDto.setDescription("Updated Description");
+
+        when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.updateCategory(updatedDto, 99L));
+    }
+
+    /**
+     * Tests that retrieving all categories returns a list of CategoryDto objects.
+     * Ensures the service correctly maps and returns multiple categories.
+     */
+    @Test
+    void getAllCategories_ReturnsListOfCategoryDtos() {
+        Category category1 = new Category();
+        category1.setId(1L);
+        category1.setName("Category1");
+        category1.setDescription("Description1");
+
+        Category category2 = new Category();
+        category2.setId(2L);
+        category2.setName("Category2");
+        category2.setDescription("Description2");
+
+        when(categoryRepository.findAll()).thenReturn(List.of(category1, category2));
+
+        List<CategoryDto> result = categoryServiceImpl.getAllCategories();
+
+        assertEquals(2, result.size());
+        assertEquals("Category1", result.get(0).getName());
+        assertEquals("Category2", result.get(1).getName());
+    }
 }
