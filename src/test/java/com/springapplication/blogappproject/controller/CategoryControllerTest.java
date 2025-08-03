@@ -306,4 +306,21 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(updatedCategoryDto)))
                 .andExpect(status().isNotFound());
     }
+
+    /**
+     * Tests the updateCategory endpoint for invalid input.
+     * Ensures that when an invalid category DTO is provided, the endpoint returns a 400 (Bad Request) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateCategory_ReturnsBadRequest_WhenInputIsInvalid() throws Exception {
+        CategoryDto invalidCategoryDto = new CategoryDto(); // Missing required fields
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidCategoryDto)))
+                .andExpect(status().isBadRequest());
+    }
 }
