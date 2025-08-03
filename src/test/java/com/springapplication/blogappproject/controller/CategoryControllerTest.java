@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestSecurityConfig.class) // Ensure this config restricts /api/categories to ADMIN
@@ -255,6 +256,33 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Tech"))
                 .andExpect(jsonPath("$[1].id").value(2L))
                 .andExpect(jsonPath("$[1].name").value("Health"));
+    }
+
+    /**
+     * Tests the updateCategory endpoint for a valid input.
+     * Ensures that when a valid category update is provided by an admin user,
+     * the endpoint returns the updated category with a 200 (OK) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateCategory_ReturnsUpdatedCategory_WhenValidInput() throws Exception {
+        CategoryDto updatedCategoryDto = new CategoryDto();
+        updatedCategoryDto.setId(1L);
+        updatedCategoryDto.setName("Updated Name");
+        updatedCategoryDto.setDescription("Updated Description");
+
+        Mockito.when(categoryService.updateCategory(Mockito.any(CategoryDto.class), Mockito.eq(1L)))
+                .thenReturn(updatedCategoryDto);
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedCategoryDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(updatedCategoryDto.getId()))
+                .andExpect(jsonPath("$.name").value(updatedCategoryDto.getName()))
+                .andExpect(jsonPath("$.description").value(updatedCategoryDto.getDescription()));
     }
 
 }
