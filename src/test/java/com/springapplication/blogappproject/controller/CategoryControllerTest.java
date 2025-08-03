@@ -323,4 +323,24 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(invalidCategoryDto)))
                 .andExpect(status().isBadRequest());
     }
+
+    /**
+     * Tests the updateCategory endpoint for a user without admin privileges.
+     * Ensures that when a user with insufficient permissions attempts to update a category,
+     * the endpoint returns a 403 (Forbidden) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateCategory_ReturnsForbidden_WhenUserHasNoAdminRole() throws Exception {
+        CategoryDto updatedCategoryDto = new CategoryDto();
+        updatedCategoryDto.setName("Updated Name");
+        updatedCategoryDto.setDescription("Updated Description");
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedCategoryDto)))
+                .andExpect(status().isForbidden());
+    }
 }
