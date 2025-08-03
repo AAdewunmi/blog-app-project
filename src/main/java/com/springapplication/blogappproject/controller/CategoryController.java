@@ -74,4 +74,20 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
+    /**
+     * Updates an existing category with the provided details. This method
+     * accepts a {@link CategoryDto} object containing the updated details
+     * and the ID of the category to update. It returns the updated category details.
+     *
+     * @param categoryDto the data transfer object containing the updated details of the category
+     * @param categoryId  the ID of the category to update
+     * @return a ResponseEntity containing the updated {@link CategoryDto} object
+     */
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,
+                                                      @PathVariable("id") Long categoryId) {
+        return ResponseEntity.ok(categoryService.updateCategory(categoryDto, categoryId));
+    }
 }
