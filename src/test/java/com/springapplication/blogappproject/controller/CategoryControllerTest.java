@@ -285,4 +285,25 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.description").value(updatedCategoryDto.getDescription()));
     }
 
+    /**
+     * Tests the updateCategory endpoint for a non-existent category.
+     * Ensures that when a category does not exist, the endpoint returns a 404 (Not Found) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateCategory_ReturnsNotFound_WhenCategoryDoesNotExist() throws Exception {
+        CategoryDto updatedCategoryDto = new CategoryDto();
+        updatedCategoryDto.setName("Updated Name");
+        updatedCategoryDto.setDescription("Updated Description");
+
+        Mockito.when(categoryService.updateCategory(Mockito.any(CategoryDto.class), Mockito.eq(99L)))
+                .thenThrow(new ResourceNotFoundException("Category", "id", 99L));
+
+        mockMvc.perform(put("/api/categories/99")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedCategoryDto)))
+                .andExpect(status().isNotFound());
+    }
 }
