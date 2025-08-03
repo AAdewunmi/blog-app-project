@@ -343,4 +343,22 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(updatedCategoryDto)))
                 .andExpect(status().isForbidden());
     }
+
+    /**
+     * Tests the updateCategory endpoint for an unauthenticated user.
+     * Ensures that when a user is not authenticated, the endpoint returns a 401 (Unauthorized) status.
+     *
+     * @throws Exception if the request processing fails
+     */
+    @Test
+    public void updateCategory_ReturnsUnauthorized_WhenUserIsNotAuthenticated() throws Exception {
+        CategoryDto updatedCategoryDto = new CategoryDto();
+        updatedCategoryDto.setName("Updated Name");
+        updatedCategoryDto.setDescription("Updated Description");
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedCategoryDto)))
+                .andExpect(status().isUnauthorized());
+    }
 }
