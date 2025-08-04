@@ -575,4 +575,19 @@ public class CategoryServiceImplTest {
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.deleteCategory(200L));
     }
+
+    /**
+     * Validates that getAllCategories returns an empty list when no categories exist.
+     */
+    @Test
+    void getAllCategories_ReturnsEmptyList_WhenNoCategoriesExist() {
+        // Arrange
+        when(categoryRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<CategoryDto> result = categoryServiceImpl.getAllCategories();
+
+        // Assert
+        assertEquals(0, result.size());
+    }
 }
