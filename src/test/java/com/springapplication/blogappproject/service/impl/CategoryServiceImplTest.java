@@ -482,4 +482,41 @@ public class CategoryServiceImplTest {
         assertEquals("Category1", result.get(0).getName());
         assertEquals("Category2", result.get(1).getName());
     }
+
+    /**
+     * Validates that addCategory returns the saved CategoryDto when given valid input.
+     */
+    @Test
+    void addCategory_ReturnsSavedCategory_WhenValidInput() {
+        // Arrange
+        CategoryDto inputDto = new CategoryDto();
+        inputDto.setName("Science");
+        inputDto.setDescription("All about science");
+
+        Category categoryEntity = new Category();
+        categoryEntity.setName("Science");
+        categoryEntity.setDescription("All about science");
+
+        Category savedCategoryEntity = new Category();
+        savedCategoryEntity.setId(2L);
+        savedCategoryEntity.setName("Science");
+        savedCategoryEntity.setDescription("All about science");
+
+        CategoryDto savedDto = new CategoryDto();
+        savedDto.setId(2L);
+        savedDto.setName("Science");
+        savedDto.setDescription("All about science");
+
+        when(modelMapper.map(inputDto, Category.class)).thenReturn(categoryEntity);
+        when(categoryRepository.save(any(Category.class))).thenReturn(savedCategoryEntity);
+        when(modelMapper.map(savedCategoryEntity, CategoryDto.class)).thenReturn(savedDto);
+
+        // Act
+        CategoryDto result = categoryServiceImpl.addCategory(inputDto);
+
+        // Assert
+        assertEquals(savedDto.getId(), result.getId());
+        assertEquals(savedDto.getName(), result.getName());
+        assertEquals(savedDto.getDescription(), result.getDescription());
+    }
 }
