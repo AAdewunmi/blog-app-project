@@ -563,4 +563,16 @@ public class CategoryServiceImplTest {
         assertEquals("New Name", result.getName());
         assertEquals("New Description", result.getDescription());
     }
+
+    /**
+     * Ensures that deleteCategory throws ResourceNotFoundException when the category does not exist.
+     */
+    @Test
+    void deleteCategory_ThrowsException_WhenCategoryDoesNotExist() {
+        // Arrange
+        when(categoryRepository.findById(200L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.deleteCategory(200L));
+    }
 }
