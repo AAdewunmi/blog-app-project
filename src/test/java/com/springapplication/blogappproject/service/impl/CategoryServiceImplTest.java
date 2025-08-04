@@ -590,4 +590,31 @@ public class CategoryServiceImplTest {
         // Assert
         assertEquals(0, result.size());
     }
+
+    /**
+     * Validates that getAllCategories returns a list of CategoryDto when categories exist.
+     */
+    @Test
+    void getAllCategories_ReturnsListOfCategories_WhenCategoriesExist() {
+        // Arrange
+        Category category1 = new Category();
+        category1.setId(1L);
+        category1.setName("Category1");
+        category1.setDescription("Description1");
+
+        Category category2 = new Category();
+        category2.setId(2L);
+        category2.setName("Category2");
+        category2.setDescription("Description2");
+
+        when(categoryRepository.findAll()).thenReturn(List.of(category1, category2));
+
+        // Act
+        List<CategoryDto> result = categoryServiceImpl.getAllCategories();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals("Category1", result.get(0).getName());
+        assertEquals("Category2", result.get(1).getName());
+    }
 }
