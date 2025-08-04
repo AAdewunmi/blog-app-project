@@ -361,4 +361,32 @@ public class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(updatedCategoryDto)))
                 .andExpect(status().isUnauthorized());
     }
+
+    /**
+     * Ensures that when a valid category is provided by an admin user,
+     * the addCategory endpoint returns the created category with a 201 (Created) status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void addCategory_ReturnsCreatedStatus_WhenValidInputProvided() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setName("Education");
+        categoryDto.setDescription("All about education");
+
+        CategoryDto savedCategory = new CategoryDto();
+        savedCategory.setId(3L);
+        savedCategory.setName("Education");
+        savedCategory.setDescription("All about education");
+
+        Mockito.when(categoryService.addCategory(Mockito.any(CategoryDto.class))).thenReturn(savedCategory);
+
+        mockMvc.perform(post("/api/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(categoryDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(savedCategory.getId()))
+                .andExpect(jsonPath("$.name").value(savedCategory.getName()))
+                .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
+    }
+
 }
