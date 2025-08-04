@@ -21,6 +21,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import java.lang.String;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestSecurityConfig.class) // Ensure this config restricts /api/categories to ADMIN
@@ -426,6 +428,21 @@ public class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Category deleted successfully!"));
+    }
+
+    /**
+     * Ensures that when a category does not exist, the deleteCategory endpoint
+     * returns a 404 (Not Found) status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteCategory_ReturnsNotFound_WhenCategoryDoesNotExist() throws Exception {
+        Mockito.doThrow(new ResourceNotFoundException("Category", "id", 99L))
+                .when(categoryService).deleteCategory(99L);
+
+        mockMvc.perform(delete("/api/categories/99")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 }
