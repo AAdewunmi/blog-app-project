@@ -519,4 +519,16 @@ public class CategoryServiceImplTest {
         assertEquals(savedDto.getName(), result.getName());
         assertEquals(savedDto.getDescription(), result.getDescription());
     }
+
+    /**
+     * Ensures that getCategory throws ResourceNotFoundException when the category does not exist.
+     */
+    @Test
+    void getCategory_ThrowsException_WhenCategoryDoesNotExist() {
+        // Arrange
+        when(categoryRepository.findById(100L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.getCategory(100L));
+    }
 }
