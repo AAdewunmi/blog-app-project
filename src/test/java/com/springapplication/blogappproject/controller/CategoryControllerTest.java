@@ -389,4 +389,28 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.description").value(savedCategory.getDescription()));
     }
 
+    /**
+     * Ensures that when a valid category update is provided by an admin user,
+     * the updateCategory endpoint returns the updated category with a 200 (OK) status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateCategory_ReturnsUpdatedCategory_WhenValidInputProvided() throws Exception {
+        CategoryDto updatedCategoryDto = new CategoryDto();
+        updatedCategoryDto.setId(1L);
+        updatedCategoryDto.setName("Updated Name");
+        updatedCategoryDto.setDescription("Updated Description");
+
+        Mockito.when(categoryService.updateCategory(Mockito.any(CategoryDto.class), Mockito.eq(1L)))
+                .thenReturn(updatedCategoryDto);
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedCategoryDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(updatedCategoryDto.getId()))
+                .andExpect(jsonPath("$.name").value(updatedCategoryDto.getName()))
+                .andExpect(jsonPath("$.description").value(updatedCategoryDto.getDescription()));
+    }
+
 }
