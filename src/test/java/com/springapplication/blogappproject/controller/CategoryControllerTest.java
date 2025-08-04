@@ -445,4 +445,26 @@ public class CategoryControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * Ensures that when a category exists, the getCategory endpoint
+     * returns the category details with a 200 (OK) status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getCategory_ReturnsCategoryDetails_WhenCategoryExists() throws Exception {
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(1L);
+        categoryDto.setName("Technology");
+        categoryDto.setDescription("All about technology");
+
+        Mockito.when(categoryService.getCategory(1L)).thenReturn(categoryDto);
+
+        mockMvc.perform(get("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(categoryDto.getId()))
+                .andExpect(jsonPath("$.name").value(categoryDto.getName()))
+                .andExpect(jsonPath("$.description").value(categoryDto.getDescription()));
+    }
+
 }
