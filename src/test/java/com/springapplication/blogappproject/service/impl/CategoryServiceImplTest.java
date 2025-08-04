@@ -531,4 +531,36 @@ public class CategoryServiceImplTest {
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categoryServiceImpl.getCategory(100L));
     }
+
+    /**
+     * Validates that updateCategory updates and returns the category when given valid input.
+     */
+    @Test
+    void updateCategory_UpdatesCategory_WhenValidInput() {
+        // Arrange
+        Category existingCategory = new Category();
+        existingCategory.setId(1L);
+        existingCategory.setName("Old Name");
+        existingCategory.setDescription("Old Description");
+
+        CategoryDto updatedDto = new CategoryDto();
+        updatedDto.setName("New Name");
+        updatedDto.setDescription("New Description");
+
+        Category updatedCategory = new Category();
+        updatedCategory.setId(1L);
+        updatedCategory.setName("New Name");
+        updatedCategory.setDescription("New Description");
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
+        when(modelMapper.map(updatedCategory, CategoryDto.class)).thenReturn(updatedDto);
+
+        // Act
+        CategoryDto result = categoryServiceImpl.updateCategory(updatedDto, 1L);
+
+        // Assert
+        assertEquals("New Name", result.getName());
+        assertEquals("New Description", result.getDescription());
+    }
 }
