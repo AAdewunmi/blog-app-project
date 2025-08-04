@@ -90,4 +90,19 @@ public class CategoryController {
                                                       @PathVariable("id") Long categoryId) {
         return ResponseEntity.ok(categoryService.updateCategory(categoryDto, categoryId));
     }
+
+    /**
+     * Deletes a category based on the provided category ID. This method removes
+     * the category associated with the given ID from the system. If the category
+     * does not exist, it will return a 404 Not Found status.
+     *
+     * @param categoryId the ID of the category to be deleted
+     * @return a ResponseEntity with an HTTP status of NO_CONTENT if the deletion is successful
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteCategory(@PathVariable("id") Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return ResponseEntity.ok("Category deleted successfully!");
+    }
 }
