@@ -413,4 +413,19 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.description").value(updatedCategoryDto.getDescription()));
     }
 
+    /**
+     * Ensures that when a category exists, the deleteCategory endpoint
+     * returns a success message with a 200 (OK) status.
+     */
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteCategory_ReturnsSuccessMessage_WhenCategoryExists() throws Exception {
+        Mockito.doNothing().when(categoryService).deleteCategory(1L);
+
+        mockMvc.perform(delete("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Category deleted successfully!"));
+    }
+
 }
