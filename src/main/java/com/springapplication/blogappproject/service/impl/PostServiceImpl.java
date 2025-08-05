@@ -1,10 +1,12 @@
 package com.springapplication.blogappproject.service.impl;
 
+import com.springapplication.blogappproject.entity.Category;
 import com.springapplication.blogappproject.entity.Post;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.CommentDto;
 import com.springapplication.blogappproject.payload.PostDto;
 import com.springapplication.blogappproject.payload.PostResponse;
+import com.springapplication.blogappproject.repository.CategoryRepository;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
 
@@ -31,10 +33,14 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
+    private final CategoryRepository categoryRepository;
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
+    public PostServiceImpl(PostRepository postRepository,
+                           ModelMapper modelMapper,
+                           CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
+        this.categoryRepository = categoryRepository;
     }
     /**
      * Creates a new post.
@@ -43,7 +49,11 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     public PostDto createPost(PostDto postDto) {
+        Category category =
+        categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
         Post post = mapToEntity(postDto);
+        post.setCategory(category);
         Post newPost = postRepository.save(post);
         PostDto postResponse = mapToDTO(newPost);
         return postResponse;
