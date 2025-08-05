@@ -410,4 +410,18 @@ public class PostServiceImplTest {
                     assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
                 });
     }
+
+    /**
+     * Ensures that createPost throws ResourceNotFoundException when the provided category does not exist.
+     */
+    @Test
+    void createPost_ThrowsException_WhenCategoryDoesNotExist() {
+        PostDto postDto = createTestPostDto();
+
+        when(categoryRepository.findById(postDto.getCategoryId())).thenReturn(Optional.empty());
+
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            postServiceImpl.createPost(postDto);
+        });
+    }
 }
