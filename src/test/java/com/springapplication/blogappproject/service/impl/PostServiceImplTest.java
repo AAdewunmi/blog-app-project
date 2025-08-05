@@ -4,6 +4,7 @@ import com.springapplication.blogappproject.entity.Category;
 import com.springapplication.blogappproject.entity.Post;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.PostDto;
+import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import com.springapplication.blogappproject.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 /**
@@ -456,6 +460,27 @@ public class PostServiceImplTest {
         org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             postServiceImpl.getPostById(TEST_ID);
         });
+    }
+
+    /**
+     * Verifies that getAllPosts returns a paginated response with posts when posts exist.
+     */
+    @Test
+    void getAllPosts_ReturnsPaginatedResponse_WhenPostsExist() {
+        Post post = createTestPost();
+        Page<Post> postPage = new org.springframework.data.domain.PageImpl<>(List.of(post));
+
+        when(postRepository.findAll(any(Pageable.class))).thenReturn(postPage);
+
+        PostResponse result = postServiceImpl.getAllPosts(0, 10, "id", "asc");
+
+        assertThat(result)
+                .isNotNull()
+                .satisfies(response -> {
+                    assertThat(result.getContent()).asList().hasSize(1);
+                    assertThat(response.getTotalElements()).isEqualTo(1);
+                    assertThat(response.getTotalPages()).isEqualTo(1);
+                });
     }
 
 }
