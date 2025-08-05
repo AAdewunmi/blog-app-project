@@ -72,6 +72,7 @@ public class PostDto {
      */
     public PostDto() {
         this.comments = new HashSet<>();  // Initialize in default constructor
-
     }
+
+    private Long categoryId;
 }
