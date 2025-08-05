@@ -445,4 +445,17 @@ public class PostServiceImplTest {
                     assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
                 });
     }
+
+    /**
+     * Ensures that getPostById throws ResourceNotFoundException when the post does not exist.
+     */
+    @Test
+    void getPostById_ThrowsException_WhenPostDoesNotExist() {
+        when(postRepository.findByIdWithComments(TEST_ID)).thenReturn(Optional.empty());
+
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            postServiceImpl.getPostById(TEST_ID);
+        });
+    }
+
 }
