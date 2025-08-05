@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.service.impl;
 
+import com.springapplication.blogappproject.entity.Category;
 import com.springapplication.blogappproject.entity.Post;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.PostDto;
@@ -10,9 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import com.springapplication.blogappproject.repository.CategoryRepository;
 
 
 /**
@@ -22,6 +27,8 @@ import static org.mockito.Mockito.when;
  */
 public class PostServiceImplTest {
 
+    @Mock
+    private CategoryRepository categoryRepository;
     /**
      * Mocked dependency for {@link PostRepository} used in test cases.
      * It is utilized to simulate the behavior of the actual repository during unit testing.
@@ -377,5 +384,30 @@ public class PostServiceImplTest {
         org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             postServiceImpl.deletePostById(TEST_ID);
         });
+    }
+
+    /**
+     * Verifies that createPost returns a PostDto with correct values when a valid input and existing category are provided.
+     */
+    @Test
+    void createPost_ReturnsPostDto_WhenValidInputProvided() {
+        PostDto postDto = createTestPostDto();
+        Category category = new Category();
+        category.setId(postDto.getCategoryId());
+        Post savedPost = createTestPost();
+
+        when(categoryRepository.findById(postDto.getCategoryId())).thenReturn(Optional.of(category));
+        when(postRepository.save(any(Post.class))).thenReturn(savedPost);
+
+        PostDto result = postServiceImpl.createPost(postDto);
+
+        assertThat(result)
+                .isNotNull()
+                .satisfies(dto -> {
+                    assertThat(dto.getId()).isEqualTo(TEST_ID);
+                    assertThat(dto.getTitle()).isEqualTo(TEST_TITLE);
+                    assertThat(dto.getContent()).isEqualTo(TEST_CONTENT);
+                    assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
+                });
     }
 }
