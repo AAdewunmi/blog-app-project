@@ -424,4 +424,25 @@ public class PostServiceImplTest {
             postServiceImpl.createPost(postDto);
         });
     }
+
+    /**
+     * Verifies that getPostById returns a PostDto with correct values when the post exists.
+     */
+    @Test
+    void getPostById_ReturnsPostDto_WhenPostExists() {
+        Post post = createTestPost();
+
+        when(postRepository.findByIdWithComments(TEST_ID)).thenReturn(Optional.of(post));
+
+        PostDto result = postServiceImpl.getPostById(TEST_ID);
+
+        assertThat(result)
+                .isNotNull()
+                .satisfies(dto -> {
+                    assertThat(dto.getId()).isEqualTo(TEST_ID);
+                    assertThat(dto.getTitle()).isEqualTo(TEST_TITLE);
+                    assertThat(dto.getContent()).isEqualTo(TEST_CONTENT);
+                    assertThat(dto.getDescription()).isEqualTo(TEST_DESCRIPTION);
+                });
+    }
 }
