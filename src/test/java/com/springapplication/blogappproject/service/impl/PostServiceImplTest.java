@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+//import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import com.springapplication.blogappproject.repository.CategoryRepository;
@@ -482,4 +482,29 @@ public class PostServiceImplTest {
                     assertThat(response.getTotalPages()).isEqualTo(1);
                 });
     }
+    /**
+     * Verifies that getAllPosts returns an empty list when no posts exist.
+     */
+    @Test
+    void getAllPosts_ReturnsAllPosts_WhenPostsExist() {
+        Post post1 = createTestPost();
+        Post post2 = new Post();
+        post2.setId(2L);
+        post2.setTitle("Another Title");
+        post2.setContent("Another Content");
+        post2.setDescription("Another Description");
+
+        when(postRepository.findAll()).thenReturn(List.of(post1, post2));
+
+        List<PostDto> result = postServiceImpl.getAllPosts();
+
+        assertThat(result)
+                .isNotNull()
+                .hasSize(2)
+                .satisfies(posts -> {
+                    assertThat(posts.get(0).getId()).isEqualTo(TEST_ID);
+                    assertThat(posts.get(1).getId()).isEqualTo(2L);
+                });
+    }
+    
 }
