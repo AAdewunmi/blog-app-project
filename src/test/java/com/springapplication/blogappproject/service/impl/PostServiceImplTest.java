@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
@@ -482,5 +482,4 @@ public class PostServiceImplTest {
                     assertThat(response.getTotalPages()).isEqualTo(1);
                 });
     }
-
 }
