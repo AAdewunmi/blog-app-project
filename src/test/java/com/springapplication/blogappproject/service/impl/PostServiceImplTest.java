@@ -506,5 +506,18 @@ public class PostServiceImplTest {
                     assertThat(posts.get(1).getId()).isEqualTo(2L);
                 });
     }
-    
+
+    /**
+     * Verifies that getAllPosts returns an empty list when no posts exist.
+     */
+    @Test
+    void getAllPosts_ReturnsEmptyList_WhenNoPostsExist() {
+        when(postRepository.findAll()).thenReturn(List.of());
+
+        List<PostDto> result = postServiceImpl.getAllPosts();
+
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
 }
