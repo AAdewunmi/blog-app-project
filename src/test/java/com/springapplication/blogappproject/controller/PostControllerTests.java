@@ -192,4 +192,15 @@ class PostControllerTests {
         verify(postService).getPostsByCategory(TEST_POST_ID);
     }
 
+    @Test
+    void shouldThrowExceptionWhenCategoryNotFound() {
+        when(postService.getPostsByCategory(TEST_POST_ID)).thenThrow(new RuntimeException("Category not found"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> postController.getPostsByCategory(TEST_POST_ID));
+
+        assertEquals("Category not found", exception.getMessage());
+        verify(postService).getPostsByCategory(TEST_POST_ID);
+    }
+
 }
