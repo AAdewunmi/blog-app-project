@@ -550,4 +550,15 @@ public class PostServiceImplTest {
             postServiceImpl.getPostsByCategory(TEST_ID);
         });
     }
+
+    @Test
+    void getAllPosts_ReturnsEmptyList_WhenNoPostsExistInRepository() {
+        when(postRepository.findAll()).thenReturn(List.of());
+
+        List<PostDto> result = postServiceImpl.getAllPosts();
+
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
 }
