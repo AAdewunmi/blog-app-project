@@ -520,4 +520,25 @@ public class PostServiceImplTest {
                 .isNotNull()
                 .isEmpty();
     }
+    /**
+     * Verifies that getPostsByCategory returns a list of posts when the category exists.
+     */
+    @Test
+    void getPostsByCategory_ReturnsPosts_WhenCategoryExists() {
+        Category category = new Category();
+        category.setId(TEST_ID);
+        Post post = createTestPost();
+        when(categoryRepository.findById(TEST_ID)).thenReturn(Optional.of(category));
+        when(postRepository.findByCategoryId(TEST_ID)).thenReturn(List.of(post));
+
+        List<PostDto> result = postServiceImpl.getPostsByCategory(TEST_ID);
+
+        assertThat(result)
+                .isNotNull()
+                .hasSize(1)
+                .satisfies(posts -> {
+                    assertThat(posts.get(0).getId()).isEqualTo(TEST_ID);
+                    assertThat(posts.get(0).getTitle()).isEqualTo(TEST_TITLE);
+                });
+    }
 }
