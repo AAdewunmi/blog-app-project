@@ -160,21 +160,26 @@ public class PostController {
             throw e;
         }
     }
-/**
- * Tests the connection to the database by checking if a post with the specified ID exists.
- *
- * @param id the ID of the post to check in the database
- * @return a ResponseEntity containing a string message indicating whether the post exists,
- *         or an error message in case of an exception
- */
-@GetMapping("/test/{id}")
-public ResponseEntity<String> testDatabaseConnection(@PathVariable(name = "id") long id) {
-    try {
-        boolean exists = postRepository.existsById(id);
-        return ResponseEntity.ok("Post with ID " + id + " exists: " + exists);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Error checking post: " + e.getMessage());
+    /**
+     * Tests the connection to the database by checking if a post with the specified ID exists.
+     *
+     * @param id the ID of the post to check in the database
+     * @return a ResponseEntity containing a string message indicating whether the post exists,
+     *         or an error message in case of an exception
+     */
+    @GetMapping("/test/{id}")
+    public ResponseEntity<String> testDatabaseConnection(@PathVariable(name = "id") long id) {
+        try {
+            boolean exists = postRepository.existsById(id);
+            return ResponseEntity.ok("Post with ID " + id + " exists: " + exists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error checking post: " + e.getMessage());
+        }
     }
-}
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable("id") Long categoryId) {
+        List<PostDto> postDtos = postService.getPostsByCategory(categoryId);
+        return ResponseEntity.ok(postDtos);
+    }
 }
