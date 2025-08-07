@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -560,5 +561,20 @@ public class PostServiceImplTest {
         assertThat(result)
                 .isNotNull()
                 .isEmpty();
+    }
+
+    @Test
+    void mapToDTO_ReturnsPostDtoWithComments_WhenPostHasComments() {
+        Post post = createTestPost();
+        post.setComments(Set.of(createTestComment()));
+
+        PostDto result = postServiceImpl.mapToDTO(post);
+
+        assertThat(result)
+                .isNotNull()
+                .satisfies(dto -> {
+                    assertThat(dto.getComments()).hasSize(1);
+                    assertThat(dto.getComments().iterator().next().getBody()).isEqualTo("Test Comment Body");
+                });
     }
 }

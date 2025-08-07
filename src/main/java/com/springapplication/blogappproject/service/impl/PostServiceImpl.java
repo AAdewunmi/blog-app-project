@@ -165,7 +165,7 @@ public class PostServiceImpl implements PostService {
     }
 
 
-private PostDto mapToDTO(Post post) {
+public PostDto mapToDTO(Post post) {
     PostDto postDto = new PostDto();
     postDto.setId(post.getId());
     postDto.setTitle(post.getTitle());
