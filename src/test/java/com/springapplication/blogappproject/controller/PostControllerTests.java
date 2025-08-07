@@ -220,4 +220,15 @@ class PostControllerTests {
         verify(postService).getAllPosts(0, 10, "id", "asc");
     }
 
+    @Test
+    void shouldHandleDatabaseConnectionErrorGracefully() {
+        when(postService.getPostById(TEST_POST_ID)).thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> postController.getPostById(TEST_POST_ID));
+
+        assertEquals("Database error", exception.getMessage());
+        verify(postService).getPostById(TEST_POST_ID);
+    }
+
 }
