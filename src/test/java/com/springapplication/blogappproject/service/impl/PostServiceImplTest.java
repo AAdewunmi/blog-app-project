@@ -541,4 +541,13 @@ public class PostServiceImplTest {
                     assertThat(posts.get(0).getTitle()).isEqualTo(TEST_TITLE);
                 });
     }
+
+    @Test
+    void getPostsByCategory_ThrowsException_WhenCategoryDoesNotExist() {
+        when(categoryRepository.findById(TEST_ID)).thenReturn(Optional.empty());
+
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            postServiceImpl.getPostsByCategory(TEST_ID);
+        });
+    }
 }
