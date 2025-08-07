@@ -589,4 +589,16 @@ public class PostServiceImplTest {
         comment.setBody("Test Comment Body");
         return comment;
     }
+
+    @Test
+    void mapToDTO_ReturnsPostDtoWithoutComments_WhenPostHasNoComments() {
+        Post post = createTestPost();
+        post.setComments(null);
+
+        PostDto result = postServiceImpl.mapToDTO(post);
+
+        assertThat(result)
+                .isNotNull()
+                .satisfies(dto -> assertThat(dto.getComments()).isEmpty());
+    }
 }
