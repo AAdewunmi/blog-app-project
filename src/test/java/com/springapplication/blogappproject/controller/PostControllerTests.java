@@ -1,6 +1,7 @@
 package com.springapplication.blogappproject.controller;
 
 import com.springapplication.blogappproject.payload.PostDto;
+import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -201,6 +202,22 @@ class PostControllerTests {
 
         assertEquals("Category not found", exception.getMessage());
         verify(postService).getPostsByCategory(TEST_POST_ID);
+    }
+
+    @Test
+    void shouldReturnPaginatedPostsSuccessfully() {
+        PostResponse expectedResponse = new PostResponse(
+                List.of(createTestPostDto(1L, "Paginated Post 1", "Content 1", "Description 1")),
+                1, 1, 1, 1, false
+        );
+        when(postService.getAllPosts(0, 10, "id", "asc")).thenReturn(expectedResponse);
+
+        PostResponse actualResponse = postController.getAllPostsPaginated(0, 10, "id", "asc");
+
+        assertNotNull(actualResponse);
+        assertEquals(1, actualResponse.getContent().size());
+        assertEquals("Paginated Post 1", actualResponse.getContent().get(0).getTitle());
+        verify(postService).getAllPosts(0, 10, "id", "asc");
     }
 
 }
