@@ -1,6 +1,7 @@
 package com.springapplication.blogappproject.service.impl;
 
 import com.springapplication.blogappproject.entity.Category;
+import com.springapplication.blogappproject.entity.Comment;
 import com.springapplication.blogappproject.entity.Post;
 import com.springapplication.blogappproject.exception.ResourceNotFoundException;
 import com.springapplication.blogappproject.payload.PostDto;
@@ -12,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+
+import static java.util.Set.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
@@ -566,7 +569,7 @@ public class PostServiceImplTest {
     @Test
     void mapToDTO_ReturnsPostDtoWithComments_WhenPostHasComments() {
         Post post = createTestPost();
-        post.setComments(Set.of(createTestComment()));
+        post.setComments(of(createTestComment()));
 
         PostDto result = postServiceImpl.mapToDTO(post);
 
@@ -576,5 +579,14 @@ public class PostServiceImplTest {
                     assertThat(dto.getComments()).hasSize(1);
                     assertThat(dto.getComments().iterator().next().getBody()).isEqualTo("Test Comment Body");
                 });
+    }
+
+    private Comment createTestComment() {
+        Comment comment = new Comment();
+        comment.setId(1L);
+        comment.setName("Test Commenter");
+        comment.setEmail("test@example.com");
+        comment.setBody("Test Comment Body");
+        return comment;
     }
 }
