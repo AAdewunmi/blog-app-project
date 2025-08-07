@@ -173,4 +173,23 @@ class PostControllerTests {
         verify(postService).updatePost(invalidPostDto, TEST_POST_ID);
     }
 
+    @Test
+    void shouldReturnPostsByCategorySuccessfully() {
+        List<PostDto> expectedPosts = List.of(
+                createTestPostDto(1L, "Category Post 1", "Content 1", "Description 1"),
+                createTestPostDto(2L, "Category Post 2", "Content 2", "Description 2")
+        );
+        when(postService.getPostsByCategory(TEST_POST_ID)).thenReturn(expectedPosts);
+
+        ResponseEntity<List<PostDto>> response = postController.getPostsByCategory(TEST_POST_ID);
+        List<PostDto> actualPosts = response.getBody();
+
+        assertNotNull(actualPosts);
+        assertEquals(2, actualPosts.size());
+        assertEquals("Category Post 1", actualPosts.get(0).getTitle());
+        assertEquals("Category Post 2", actualPosts.get(1).getTitle());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(postService).getPostsByCategory(TEST_POST_ID);
+    }
+
 }
