@@ -1,5 +1,10 @@
 package com.springapplication.blogappproject;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -14,6 +19,28 @@ import org.springframework.context.annotation.Bean;
  * component scanning, and configuration properties.
  */
 @SpringBootApplication
+/**
+ * This annotation defines the OpenAPI specification for the application.
+ */
+@OpenAPIDefinition(
+        info = @Info(title = "Blog App Project API",
+                version = "v1",
+                description = "This is a sample API for the Blog App Project.",
+                contact = @Contact(
+                        name = "",
+                        email = "",
+                        url = ""
+                ),
+                license = @License(
+                        name = "Apache 2.0",
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.html"
+                )
+        ),
+        externalDocs = @ExternalDocumentation(
+                description = "Blog App Project Wiki",
+                url = "https://github.com/sahil-r/Blog-App-Project/wiki"
+        )
+)
 public class BlogAppProjectApplication {
     /**
      * Bean definition for ModelMapper.
