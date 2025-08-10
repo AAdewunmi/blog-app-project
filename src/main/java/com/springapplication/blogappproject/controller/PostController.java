@@ -58,6 +58,14 @@ public class PostController {
      * @return a {@link PostResponse} object containing the list of posts and pagination details.
      */
     // Paginated version
+    @Operation(
+            summary = "Retrieves a paginated list of blog posts",
+            description = "Retrieves a paginated list of blog posts based on the provided parameters."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of posts retrieved successfully"
+    )
     @GetMapping("/paginated")
     public PostResponse getAllPostsPaginated(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -114,6 +122,14 @@ public class PostController {
      * @param id the ID of the post to retrieve.
      * @return ResponseEntity containing the PostDto if found, or an error if not found.
      */
+    @Operation(
+            summary = "Retrieves a blog post by its ID",
+            description = "Retrieves a blog post by its ID."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Post retrieved successfully"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id) {
         log.info("Receiving request to find post with id: {}", id);
@@ -138,6 +154,14 @@ public class PostController {
      * @param id the ID of the post to update.
      * @return ResponseEntity containing the updated PostDto and HTTP status code.
      */
+    @Operation(
+            summary = "Updates a blog post by its ID",
+            description = "Updates a blog post by its ID with the provided details."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Post updated successfully"
+    )
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
     @SecurityRequirement(
@@ -168,6 +192,14 @@ public class PostController {
      * @param id the ID of the post to delete.
      * @return ResponseEntity with HTTP status code indicating the result of the deletion.
      */
+    @Operation(
+            summary = "Deletes a blog post by its ID",
+            description = "Deletes a blog post by its ID."
+    )
+    @ApiResponse(
+            responseCode = "204",
+            description = "Post deleted successfully"
+    )
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePostById(@PathVariable(name = "id") long id) {
@@ -198,6 +230,14 @@ public class PostController {
                 .body("Error checking post: " + e.getMessage());
         }
     }
+    @Operation(
+            summary = "Retrieves a list of posts by category ID",
+            description = "Retrieves a list of blog posts associated with the specified category ID."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of posts retrieved successfully"
+    )
     @GetMapping("/category/{id}")
     public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable("id") Long categoryId) {
         List<PostDto> postDtos = postService.getPostsByCategory(categoryId);
