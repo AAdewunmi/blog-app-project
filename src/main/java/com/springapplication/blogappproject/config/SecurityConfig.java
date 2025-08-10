@@ -3,6 +3,8 @@ package com.springapplication.blogappproject.config;
 import com.springapplication.blogappproject.security.JwtAuthenticationFilter;
 import com.springapplication.blogappproject.service.CustomUserDetailsService;
 import com.springapplication.blogappproject.security.JwtAuthenticationEntryPoint;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+/**
+ * This annotation defines the OpenAPI security scheme for the application.
+ * It is used to document the security requirements for endpoints in the API.
+ */
+@SecurityScheme(
+        name = "Bear Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
