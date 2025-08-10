@@ -1,5 +1,6 @@
 package com.springapplication.blogappproject.payload;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,6 +15,10 @@ import java.util.Set;
  * This class is used to transfer data between different layers of the application.
  */
 @Data
+@Schema(
+        name = "Post",
+        description = "A blog post with title, content, and description."
+)
 public class PostDto {
 
     /**
@@ -25,6 +30,7 @@ public class PostDto {
      * The title of the blog post.
      * This field represents the main heading or name of the blog post.
      */
+    @Schema(description = "The title of the blog post.", example = "How to Use Spring Boot")
     @NotEmpty(message = "Title cannot be empty.")
     @Size(min = 5, max = 255, message = "Title must be between 5 and 255 characters.")
     private String title;
@@ -32,13 +38,14 @@ public class PostDto {
      * Represents the main textual content of a blog post.
      * This field is used to store the full body of the post as a string.
      */
-
+    @Schema(description = "The content of the blog post.", example = "This is a sample blog post.")
     @NotEmpty(message = "Content cannot be empty.")
     private String content;
     /**
      * A brief description of the blog post.
      * This field provides a summary or overview of the post's content.
      */
+    @Schema(description = "A brief description of the blog post.", example = "This is a sample blog post.")
     @NotEmpty(message = "Description cannot be empty.")
     @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters.")
     private String description;
@@ -47,6 +54,7 @@ public class PostDto {
      * Represents a collection of comments associated with a blog post.
      * This field stores multiple comments related to a specific post.
      */
+    @Schema(description = "A collection of comments associated with the post.")
     private Set<CommentDto> comments;
 
     /**
@@ -73,6 +81,7 @@ public class PostDto {
     public PostDto() {
         this.comments = new HashSet<>();  // Initialize in default constructor
     }
-
+    @Schema(description = "The ID of the category associated with the post.")
+    @NotNull(message = "Category ID cannot be null.")
     private Long categoryId;
 }
