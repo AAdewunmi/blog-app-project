@@ -5,7 +5,10 @@ import com.springapplication.blogappproject.payload.PostResponse;
 import com.springapplication.blogappproject.repository.PostRepository;
 import com.springapplication.blogappproject.service.PostService;
 import com.springapplication.blogappproject.utils.AppConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/posts")
+@Tag(
+        name = "CRUD REST APIs for Post Resource"
+)
 public class PostController {
     /**
      * The PostService instance used by the PostController for business logic related to blog posts.
@@ -81,7 +87,14 @@ public class PostController {
      * @param postDto the data transfer object containing post details.
      * @return ResponseEntity containing the created PostDto and HTTP status code.
      */
-
+    @Operation(
+            summary = "Creates a new blog post",
+            description = "Creates a new blog post with the provided details."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Post created successfully"
+    )
     @SecurityRequirement(
             name = "Bear Authentication"
     )
@@ -127,6 +140,9 @@ public class PostController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/{id}")
+    @SecurityRequirement(
+            name = "Bear Authentication"
+    )
     public ResponseEntity<PostDto> updatePost(
             @Valid
             @RequestBody PostDto postDto,
